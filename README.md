@@ -6,7 +6,7 @@ Projeto de prática extensionista - Engenharia de Software, Ano 3 - Unaerp, Ribe
 
 ### Documentação
 
-- [📋 Lista de Tarefas (TODO)](./TODO.md)
+- [📋 Lista de Tarefas (TODO)](./docs/TODO.md)
 
 ## Objetivo
 

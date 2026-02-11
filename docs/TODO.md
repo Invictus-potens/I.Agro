@@ -1,7 +1,7 @@
 # TODO
 
 ## Status do Projeto
-- [✅] Projeto Iniciado
+- [x] Projeto Iniciado
 - [ ] Em Desenvolvimento
 - [ ] Fase de Testes
 - [ ] Concluído
@@ -9,7 +9,7 @@
 ---
 
 ## Modelagem de Dados
-- [✅] Pesquisar e selecionar API de clima
+- [x] Pesquisar e selecionar API de clima
 - [ ] Estudar estrutura de dados retornados pela API
 - [ ] Desenhar diagrama ER do banco de dados
 - [ ] Definir schema das tabelas principais
@@ -19,12 +19,12 @@
 ---
 
 ## Automação de Coleta
-- [✅] Criar conta/credenciais na API de clima escolhida
-- [✅] Testar endpoints da API manualmente
-- [✅] Configurar instância do n8n
-- [✅] Criar workflow de coleta automática
-- [✅] Configurar scheduling (cron jobs)
-- [✅] Implementar conexão com PostgreSQL
+- [x] Criar conta/credenciais na API de clima escolhida
+- [x] Testar endpoints da API manualmente
+- [x] Configurar instância do n8n
+- [x] Criar workflow de coleta automática
+- [x] Configurar scheduling (cron jobs)
+- [x] Implementar conexão com PostgreSQL
 - [ ] Testar inserção automática de dados
 - [ ] Configurar tratamento de erros e logs
 
@@ -52,8 +52,8 @@
 ---
 
 ## Dashboard de Monitoramento
-- [✅] Instalar e configurar Grafana
-- [✅] Conectar Grafana ao PostgreSQL
+- [x] Instalar e configurar Grafana
+- [x] Conectar Grafana ao PostgreSQL
 - [ ] Criar dashboard principal
 - [ ] Implementar visualizações:
   - [ ] Gráficos de séries temporais (temperatura, umidade, etc.)
@@ -106,8 +106,8 @@
 ---
 
 ## Documentação
-- [✅] README.md 
-- [✅] TODO.md 
+- [x] README.md 
+- [x] TODO.md 
 - [ ] Documentação da API
 - [ ] Manual do usuário
 - [ ] Guia de instalação
