@@ -1,8 +1,10 @@
 # Assistente IA para Agricultura
 
+Projeto de prática extensionista - Engenharia de Software, Ano 3 - Unaerp, Ribeirão Preto.
+
 ## Objetivo
 
-O intuito do nosso projeto é criar um **companheiro assistido por IA** para fazendeiros!
+O intuito do nosso projeto é criar um **companheiro assistido por IA** para fazendeiros e agricultores.
 
 Ele irá reunir dados sobre o clima da região, fazendo:
 - Previsões meteorológicas
@@ -57,10 +59,5 @@ Acompanhando essa IA, temos um **dashboard** onde dados de monitoramento em temp
 ---
 
 <div align="center">
-  Projeto feito por:
-   Alexandre Rodrigo
-   Bruno Henrique
-   Ettore Saburi
-   Felipe Ortiz
-   Marcos Kaminski
+  Projeto feito por: Alexandre Rodrigo - Bruno Henrique - Ettore Saburi - Felipe Ortiz - Marcos Kaminski
 </div>
