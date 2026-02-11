@@ -1,0 +1,2 @@
+swagger weather Api - https://app.swaggerhub.com/apis-docs/WeatherAPI.com/WeatherAPI/1.0.2
+swagger embrapa Api - https://www.agroapi.cnptia.embrapa.br/store/apis/info?name=ClimAPI&version=v1&provider=agroapi#/default/get_ncep_gfs

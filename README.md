@@ -2,6 +2,12 @@
 
 Projeto de prática extensionista - Engenharia de Software, Ano 3 - Unaerp, Ribeirão Preto.
 
+## Sumário
+
+### Documentação
+
+- [📋 Lista de Tarefas (TODO)](./TODO.md)
+
 ## Objetivo
 
 O intuito do nosso projeto é criar um **companheiro assistido por IA** para fazendeiros e agricultores.
