@@ -1,5 +1,5 @@
 {
-  "name": "Cron de população do banco",
+  "name": "cron população realtime",
   "nodes": [
     {
       "parameters": {
@@ -9,10 +9,10 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        416,
-        0
+        640,
+        104
       ],
-      "id": "b6763f41-2c42-47b7-b0b1-66d9c2d078d9",
+      "id": "d1053df7-39fd-4e7f-8a79-5b6309a1e840",
       "name": "Split Out"
     },
     {
@@ -31,7 +31,7 @@
             },
             {
               "name": "key",
-              "value": "weatherApiKeyAqui"
+              "value": "bde3ac9821444b19800150125261102"
             }
           ]
         },
@@ -49,10 +49,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        208,
-        0
+        416,
+        104
       ],
-      "id": "6fdb1fa6-8e0f-40c8-bcec-37e2cceb4a9c",
+      "id": "7b12dbfb-9bfa-4af5-a7b9-88b01950af21",
       "name": "Previsão do tempo - weather api"
     },
     {
@@ -72,10 +72,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        928,
-        16
+        1088,
+        32
       ],
-      "id": "7adc9d86-8dac-44e9-9f18-91fda551e9fe",
+      "id": "6e31caff-176f-46c4-82be-33206b1d8d61",
       "name": "Insert rows in a table",
       "credentials": {
         "postgres": {
@@ -92,10 +92,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        656,
-        0
+        864,
+        104
       ],
-      "id": "5e145658-f4ab-4715-8917-221006dd995b",
+      "id": "925f93d8-896c-40d1-a06f-18cd9a15b984",
       "name": "Loop Over Items"
     },
     {
@@ -112,10 +112,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        0,
-        0
+        192,
+        104
       ],
-      "id": "deb5004d-2a31-4567-94b5-ab680a152484",
+      "id": "8fd228d3-816e-4fe0-83fb-97dc844740a4",
       "name": "Schedule Trigger"
     },
     {
@@ -126,10 +126,10 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        1136,
-        16
+        1312,
+        32
       ],
-      "id": "891b7d34-2294-4885-98b9-3e2f1ad35066",
+      "id": "946e98be-0a14-4c20-82c2-5709dabf05bd",
       "name": "Split Out1"
     },
     {
@@ -149,10 +149,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        928,
-        256
+        1536,
+        104
       ],
-      "id": "fb215a16-aecb-445d-9203-863877de87db",
+      "id": "ba31c26f-290c-4229-8b54-7b391818df5c",
       "name": "Insert rows in a table1",
       "credentials": {
         "postgres": {
@@ -164,16 +164,16 @@
     },
     {
       "parameters": {
-        "content": "### Considerar\nA busca é feita diária e dentro do dia existe um array com um objeto para cada hora do dia, então acredito que podemos armazenar as previsões do dia junto com uma tabela armazenando dia + horas.",
+        "content": "### Considerar\nPrecisamos do schema do banco pronto\n",
         "height": 208
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1344,
-        16
+        1728,
+        64
       ],
       "typeVersion": 1,
-      "id": "d56991e1-b8a0-4806-9b28-95bc23047d8a",
+      "id": "1ea42c4d-16bb-4ab8-abbe-aa3b456855df",
       "name": "Sticky Note"
     }
   ],
@@ -206,7 +206,7 @@
         [],
         [
           {
-            "node": "Split Out1",
+            "node": "Insert rows in a table",
             "type": "main",
             "index": 0
           }
@@ -262,11 +262,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "28cb3b70-2e25-49ec-b75d-deb69a6c859f",
+  "versionId": "170ec25c-8841-4f01-8940-20bd5fe1231a",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "961c5c2c2b4539844395f77c9f0918101ffe5df5e772cff6e475957685bd67ab"
   },
-  "id": "6Zlkx5Mg8hc3zs2s",
+  "id": "sQvsV0yighnO6rYS",
   "tags": []
 }
