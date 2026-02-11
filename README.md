@@ -1,8 +1,8 @@
-# 🌾 Assistente IA para Agricultura
+# Assistente IA para Agricultura
 
 ## Objetivo
 
-O intuito do nosso projeto é criar um **companheiro assistido por IA** para fazendeiros! 🚜✨ 
+O intuito do nosso projeto é criar um **companheiro assistido por IA** para fazendeiros!
 
 Ele irá reunir dados sobre o clima da região, fazendo:
 - Previsões meteorológicas
@@ -14,7 +14,7 @@ Isso inclui recomendações sobre:
 - Controle de pragas
 - Manejo da plantação
 
-Acompanhando essa IA, temos um **dashboard** onde dados de monitoramento em tempo real são logados e ficam prontos para consulta! 📈
+Acompanhando essa IA, temos um **dashboard** onde dados de monitoramento em tempo real são logados e ficam prontos para consulta!
 
 ## Execução
 
@@ -57,5 +57,10 @@ Acompanhando essa IA, temos um **dashboard** onde dados de monitoramento em temp
 ---
 
 <div align="center">
-  Feito com 💚 para ajudar os agricultores 🌾
+  Projeto feito por:
+   Alexandre Rodrigo
+   Bruno Henrique
+   Ettore Saburi
+   Felipe Ortiz
+   Marcos Kaminski
 </div>
