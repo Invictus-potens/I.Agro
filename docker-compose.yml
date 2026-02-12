@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: farmer-db
+    environment:
+      POSTGRES_USER: farmer
+      POSTGRES_PASSWORD: farmerpassword
+      POSTGRES_DB: farmer_companion
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:
