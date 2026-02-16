@@ -1,6 +1,7 @@
 from typing import Generator
 from sqlmodel import SQLModel, create_engine, Session
 from app.config import settings
+from app.models import User, Farm, Location, CurrentWeather, ForecastDay, ForecastHour
 
 engine = create_engine(settings.DATABASE_URL)
 
@@ -9,4 +10,11 @@ def get_session() -> Generator[Session, None, None]:
         yield session
 
 def create_tables():
-    SQLModel.metadata.create_all(engine)
+    print(f"Conectando ao banco de dados em: {settings.DB_HOST}")
+    try:
+        SQLModel.metadata.create_all(engine)
+        print("Tabelas verificadas/criadas com sucesso.")
+    except Exception as e:
+        print(f"Erro ao criar tabelas: {e}")
+
+create_tables()
