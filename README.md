@@ -65,5 +65,5 @@ Acompanhando essa IA, temos um **dashboard** onde dados de monitoramento em temp
 ---
 
 <div align="center">
-  Projeto feito por: Alexandre Rodrigo - Bruno Henrique - Ettore Saburi - Felipe Ortiz - Marcos Kaminski
+  Projeto feito por: Alexandre Rodrigues - Bruno Henrique - Ettore Saburi - Felipe Ortiz - Marcos Kaminski
 </div>
