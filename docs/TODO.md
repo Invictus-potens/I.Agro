@@ -2,7 +2,7 @@
 
 ## Status do Projeto
 - [x] Projeto Iniciado
-- [ ] Em Desenvolvimento
+- [x] Em Desenvolvimento
 - [ ] Fase de Testes
 - [ ] Concluído
 
@@ -10,10 +10,10 @@
 
 ## Modelagem de Dados
 - [x] Pesquisar e selecionar API de clima
-- [ ] Estudar estrutura de dados retornados pela API
+- [x] Estudar estrutura de dados retornados pela API
 - [ ] Desenhar diagrama ER do banco de dados
-- [ ] Definir schema das tabelas principais
-- [ ] Definir tipos de dados e constraints
+- [x] Definir schema das tabelas principais
+- [x] Definir tipos de dados e constraints
 - [ ] Revisar e validar modelagem com a equipe
 
 ---
@@ -25,7 +25,7 @@
 - [x] Criar workflow de coleta automática
 - [x] Configurar scheduling (cron jobs)
 - [x] Implementar conexão com PostgreSQL
-- [ ] Testar inserção automática de dados
+- [x] Testar inserção automática de dados
 - [ ] Configurar tratamento de erros e logs
 
 ---
@@ -70,7 +70,7 @@
 
 ## Interface do Usuário
 ### Frontend
-- [ ] Criar estrutura HTML base
+- [x] Criar estrutura HTML base
 - [ ] Desenvolver layout responsivo
 - [ ] Estilizar com CSS
 - [ ] Integrar dashboard do Grafana
@@ -126,7 +126,7 @@
 ---
 
 ## Responsáveis
-- Alexandre Rodrigo
+- Alexandre Rodrigues
 - Bruno Henrique
 - Ettore Saburi
 - Felipe Ortiz
