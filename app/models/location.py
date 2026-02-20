@@ -10,10 +10,8 @@ class Location(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True)
-    region: Optional[str] = None
-    country: Optional[str] = None
     lat: float
     lon: float
-    tz_id: Optional[str] = None
+    state: Optional[str] = None
     current_weather: List["CurrentWeather"] = Relationship(back_populates="location")
     forecasts: List["ForecastDay"] = Relationship(back_populates="location")
