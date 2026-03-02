@@ -6,3 +6,10 @@
 *.tmp
 /.venv
 *.pyc
+/.claude
+Claude.md
+skills-lock.json
+.agent
+.agents
+.junie
+.kiro

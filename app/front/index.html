@@ -4,86 +4,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agro IA — Chatbot</title>
+    <title>AgroIA — Companheiro Agrícola</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/styles.css">
-
 </head>
 
 <body>
-    <div class="app-container">
+    <div class="app-container" id="appContainer">
 
-        <aside class="sidebar">
-            <button class="new-chat-btn">
-                <span>+</span> Novo Planejamento
+        <!-- ======== SIDEBAR ======== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="brand-mark">✦</span>
+                <span class="brand-name">AgroIA</span>
+            </div>
+
+            <button class="new-chat-btn" id="newChatBtn">
+                <span class="new-chat-plus">+</span>
+                Novo Planejamento
             </button>
 
-            <!-- <div class="history-list">
-                <p class="history-label">Hoje</p>
-                <div class="history-item">Teste</div>
-                <div class="history-item">Teste</div>
-                
-                <p class="history-label">Ontem</p>
-                <div class="history-item">Teste</div>
-                <div class="history-item">Teste</div> -->
-
             <div class="history-list" id="historyList">
-                <!-- Histórico será carregado dinamicamente aqui -->
+                <!-- Histórico carregado dinamicamente -->
             </div>
 
             <div class="user-menu">
-                <div class="user-avatar">X</div>
-                <div class="user-name">User</div>
+                <div class="user-avatar">A</div>
+                <div class="user-info">
+                    <span class="user-name">Agricultor</span>
+                    <span class="user-role">Fazenda</span>
+                </div>
             </div>
         </aside>
 
+        <!-- ======== TOPBAR ======== -->
         <div class="topbar">
             <h1 class="topic-tittle" id="chatTitle">Novo Planejamento</h1>
+
+            <nav class="tab-nav">
+                <button class="tab-btn active" id="tabChat" data-tab="chat">
+                    ◉ Chat IA
+                </button>
+                <button class="tab-btn" id="tabMonitor" data-tab="monitor">
+                    ◈ Monitoramento
+                </button>
+            </nav>
+
+            <button class="config-btn" id="configBtn" title="Configurações">⚙</button>
         </div>
 
-        <main class="chat-container">
+        <!-- ======== CHAT VIEW ======== -->
+        <main class="chat-container" id="chatView">
 
-            <div class="chat-messages" id="chatMessages">
-
-                <!-- <div class="message-row user">
-                    <div class="message-content">
-                        <div class="avatar user-av">X</div>
-                        <div class="text">Como está a previsão do tempo para o plantio amanhã?</div>
+            <!-- Estado de boas-vindas -->
+            <div class="chat-welcome" id="chatWelcome">
+                <div class="welcome-content">
+                    <div class="welcome-emblem">✦</div>
+                    <h2 class="welcome-title">AgroIA</h2>
+                    <p class="welcome-sub">Companheiro inteligente para sua lavoura.<br>Pergunte sobre clima, plantio e colheita.</p>
+                    <div class="welcome-chips">
+                        <button class="suggestion-chip" onclick="useSuggestion('Qual a previsão do tempo para os próximos 3 dias?')">
+                            ☁ Previsão 3 dias
+                        </button>
+                        <button class="suggestion-chip" onclick="useSuggestion('Quando devo irrigar minha plantação esta semana?')">
+                            💧 Irrigação
+                        </button>
+                        <button class="suggestion-chip" onclick="useSuggestion('Há risco de geada ou chuva forte esta semana?')">
+                            ⚡ Alertas climáticos
+                        </button>
+                        <button class="suggestion-chip" onclick="useSuggestion('Qual o melhor momento para iniciar o plantio?')">
+                            🌱 Momento de plantio
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                <div class="message-row ai">
-                    <div class="message-content">
-                        <div class="avatar ai-av">
-                            <div class="avatar-ai">
-                                <img src="assets/img/avatar_ai.png">
-                            </div>
-                        </div>
-                        <div class="text">
-                            <p>Para Ribeirão Preto, a previsão indica chuva leve pela manhã (5mm).</p>
-                            <p>Recomendo aguardar até o período da tarde para iniciar o plantio, quando o solo tiver drenado o excesso de umidade.</p>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Mensagens serão carregadas dinamicamente aqui -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Mensagens carregadas dinamicamente -->
             </div>
 
             <div class="input-area">
                 <div class="input-container">
-                    <input type="text" id="userInput" placeholder="Envie uma mensagem para a AgroIA...">
-                    <button id="sendBtn" type="button">
-                        <img src="./assets/img/message.png">
+                    <input type="text" id="userInput" placeholder="Pergunte sobre clima, plantio, colheita...">
+                    <button id="sendBtn" type="button" title="Enviar mensagem">
+                        <img src="./assets/img/message.png" alt="Enviar">
                     </button>
                 </div>
-                <p class="disclaimer">A AgroIA pode cometer erros. Verifique informações importantes.</p>
+                <p class="disclaimer">AgroIA pode cometer erros. Consulte um agrônomo para decisões críticas.</p>
+            </div>
+        </main>
+
+        <!-- ======== MONITORING VIEW ======== -->
+        <section class="monitor-container hidden" id="monitorView">
+            <div class="grafana-header">
+                <div class="grafana-header-left">
+                    <span class="grafana-label">◈ Dashboard</span>
+                    <span class="grafana-url-display" id="grafanaUrlDisplay">Nenhuma URL configurada</span>
+                </div>
+                <button class="btn-config-grafana" id="configGrafanaBtn">Configurar URL</button>
             </div>
 
-        </main>
+            <div class="grafana-wrapper">
+                <div class="grafana-placeholder" id="grafanaPlaceholder">
+                    <div class="placeholder-emblem">◈</div>
+                    <h3 class="placeholder-title">Nenhum dashboard conectado</h3>
+                    <p class="placeholder-text">Conecte seu painel Grafana para visualizar<br>dados climáticos em tempo real.</p>
+                    <button class="btn-primary" id="openConfigFromPlaceholder">Configurar Grafana</button>
+                </div>
+                <iframe
+                    id="grafanaFrame"
+                    class="grafana-iframe hidden"
+                    src=""
+                    frameborder="0"
+                    allowfullscreen
+                    title="Dashboard Grafana"
+                ></iframe>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ======== MODAL: Configurações ======== -->
+    <div class="modal-overlay hidden" id="configModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Configurações</h2>
+                <button class="modal-close" id="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="config-group">
+                    <label for="grafanaUrlInput">URL do Dashboard Grafana</label>
+                    <input
+                        type="text"
+                        id="grafanaUrlInput"
+                        placeholder="http://localhost:3000/d/..."
+                        class="modal-input"
+                    >
+                    <p class="modal-hint">
+                        Para embutir corretamente, ative <code>allow_embedding = true</code>
+                        nas configurações do Grafana.
+                    </p>
+                </div>
+                <div class="config-group">
+                    <label for="apiUrlInput">URL da API Backend</label>
+                    <input
+                        type="text"
+                        id="apiUrlInput"
+                        placeholder="http://localhost:3000"
+                        class="modal-input"
+                    >
+                    <p class="modal-hint">Endereço base do servidor backend onde o chat IA está hospedado.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelConfig">Cancelar</button>
+                <button class="btn-primary" id="saveConfig">Salvar configurações</button>
+            </div>
+        </div>
     </div>
 
     <script src="./assets/js/main.js"></script>
-
 </body>
 
 </html>
