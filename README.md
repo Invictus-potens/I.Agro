@@ -1,5 +1,8 @@
+<div align = "center">
+<img src = "https://img.icons8.com/?size=100&id=18047&format=png&color=000000" width = "60" />
+   
 # Assistente IA para Agricultura
-
+</div>
 Projeto de prática extensionista - Engenharia de Software, Ano 3 - Unaerp, Ribeirão Preto.
 
 ## Sumário
