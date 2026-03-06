@@ -1,43 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
 
 /* ============================================
-   DESIGN TOKENS — Paleta de Terra
+   DESIGN TOKENS — Paleta Agro Clara
    ============================================ */
 :root {
-    /* Solos escuros */
-    --soil-950: #0a0804;
-    --soil-900: #100e08;
-    --soil-800: #181410;
-    --soil-700: #1e1a12;
-    --soil-600: #2a2518;
-    --soil-500: #38301e;
+    /* Backgrounds (claro) */
+    --soil-950: #F9FAFB;   /* fundo principal */
+    --soil-900: #2D4635;   /* sidebar / topbar — Verde Musgo */
+    --soil-800: #F9FAFB;   /* área de conteúdo */
+    --soil-700: #EDF2EE;   /* mensagem IA */
+    --soil-600: #E2E8E3;   /* avatar / superfícies sutis */
+    --soil-500: #9CA3AF;   /* scrollbar */
 
-    /* Grão / Creme */
-    --grain-50:  #faf5e8;
-    --grain-100: #f2e4c4;
-    --grain-200: #e5d3a3;
-    --grain-300: #c9b880;
-    --grain-400: #a89860;
-    --grain-500: #7a6e48;
+    /* Texto (escuro sobre fundo claro) */
+    --grain-50:  #F9FAFB;
+    --grain-100: #374151;  /* Grafite Escuro — texto principal */
+    --grain-200: #4B5563;
+    --grain-300: #6B7280;
+    --grain-400: #9CA3AF;
+    --grain-500: #9CA3AF;  /* muted / placeholders */
 
     /* Acentos */
-    --harvest:   #e9a84c;  /* âmbar — colheita */
-    --harvest-dk:#c48828;
-    --sprout:    #7fb069;  /* verde-sálvia — crescimento */
-    --sprout-dk: #5a8a46;
-    --rain:      #6a95c4;  /* azul-aço — chuva */
-    --clay:      #b05a3a;  /* terracota — alerta */
+    --harvest:   #E5B25D;  /* Dourado Agro — destaques */
+    --harvest-dk:#C8922A;
+    --sprout:    #2D4635;  /* Verde Musgo */
+    --sprout-dk: #3D6B50;
+    --rain:      #6a95c4;
+    --clay:      #b05a3a;
 
     /* Semânticos */
-    --bg-body:      var(--soil-950);
-    --bg-sidebar:   var(--soil-900);
-    --bg-main:      var(--soil-800);
-    --bg-ai-msg:    var(--soil-700);
-    --bg-input:     var(--soil-600);
-    --text-primary: var(--grain-100);
-    --text-muted:   var(--grain-400);
-    --border:       rgba(240, 210, 140, 0.10);
-    --border-hover: rgba(240, 210, 140, 0.22);
+    --bg-body:      #F9FAFB;
+    --bg-sidebar:   #2D4635;
+    --bg-main:      #F9FAFB;
+    --bg-ai-msg:    #EDF2EE;
+    --bg-input:     #FFFFFF;
+    --text-primary: #374151;
+    --text-muted:   #6B7280;
+    --border:       rgba(55, 65, 81, 0.13);
+    --border-hover: rgba(55, 65, 81, 0.28);
     --accent:       var(--harvest);
     --accent-alt:   var(--sprout);
 
@@ -764,6 +764,78 @@ body::before {
 }
 
 /* ============================================
+   SIDEBAR — texto claro sobre fundo escuro
+   ============================================ */
+.sidebar .brand-name,
+.sidebar .new-chat-btn {
+    color: rgba(249, 250, 251, 0.90);
+}
+
+.sidebar .new-chat-btn {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.sidebar .new-chat-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.30);
+}
+
+.sidebar .history-label,
+.sidebar .user-role {
+    color: rgba(249, 250, 251, 0.45);
+}
+
+.sidebar .history-item {
+    color: rgba(249, 250, 251, 0.65);
+}
+
+.sidebar .history-item:hover {
+    background-color: rgba(255, 255, 255, 0.07);
+    color: rgba(249, 250, 251, 0.95);
+}
+
+.sidebar .history-item.active {
+    background-color: rgba(229, 178, 93, 0.20);
+    border-left-color: var(--harvest);
+    color: #FFFFFF;
+}
+
+.sidebar .user-name {
+    color: rgba(249, 250, 251, 0.88);
+}
+
+.sidebar .user-avatar {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: var(--harvest);
+    color: var(--harvest);
+}
+
+/* TOPBAR — texto claro sobre Verde Musgo */
+.topbar .topic-tittle {
+    color: rgba(249, 250, 251, 0.70);
+}
+
+.topbar .tab-btn {
+    color: rgba(249, 250, 251, 0.60);
+}
+
+.topbar .tab-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: rgba(249, 250, 251, 0.95);
+}
+
+.topbar .config-btn {
+    color: rgba(249, 250, 251, 0.60);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.topbar .config-btn:hover {
+    color: rgba(249, 250, 251, 0.95);
+    border-color: rgba(255, 255, 255, 0.35);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================
    BOTÕES GENÉRICOS
    ============================================ */
 .btn-primary {
@@ -785,9 +857,9 @@ body::before {
 }
 
 .btn-secondary {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--grain-300);
+    background: #F3EFE0;
+    border: 1px solid rgba(55, 65, 81, 0.18);
+    color: #374151;
     padding: 9px 20px;
     border-radius: 7px;
     cursor: pointer;
@@ -797,8 +869,8 @@ body::before {
 }
 
 .btn-secondary:hover {
-    background-color: rgba(255, 220, 140, 0.05);
-    border-color: var(--border-hover);
+    background-color: #EAE4CC;
+    border-color: rgba(55, 65, 81, 0.30);
 }
 
 /* ============================================
@@ -807,7 +879,7 @@ body::before {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(8, 6, 3, 0.75);
+    background: rgba(0, 0, 0, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
