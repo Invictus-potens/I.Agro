@@ -1,497 +1,467 @@
-// Inteiramente feito com o cursor somente para estudo de como integrar o chatbot, banco de dados e frontend. 
+// ============================================
+// CONFIGURAÇÃO
+// ============================================
+const DEFAULT_API_URL = 'http://localhost:3000';
 
-// // ============================================
-// // CONFIGURAÇÃO DO BACKEND
-// // ============================================
-// const API_BASE_URL = 'http://localhost:3000'; // Ajuste conforme backend
+let API_BASE_URL = localStorage.getItem('agroApiUrl') || DEFAULT_API_URL;
+let grafanaUrl = localStorage.getItem('agroGrafanaUrl') || '';
 
-// // ============================================
-// // ESTADO DA APLICAÇÃO
-// // ============================================
-// let currentChatId = null; // ID da conversa atual
-// let currentMessages = []; // Mensagens da conversa atual
+// ============================================
+// ESTADO DA APLICAÇÃO
+// ============================================
+let currentChatId = null;
+let currentMessages = [];
+let activeTab = 'chat'; // 'chat' | 'monitor'
 
-// // ============================================
-// // ELEMENTOS DO DOM
-// // ============================================
-// const chatMessages = document.getElementById('chatMessages');
-// const userInput = document.getElementById('userInput');
-// const sendBtn = document.getElementById('sendBtn');
-// const newChatBtn = document.querySelector('.new-chat-btn');
-// const historyList = document.getElementById('historyList');
-// const chatTitle = document.getElementById('chatTitle');
+// ============================================
+// ELEMENTOS DO DOM
+// ============================================
+const appContainer    = document.getElementById('appContainer');
+const sidebar         = document.getElementById('sidebar');
+const chatView        = document.getElementById('chatView');
+const monitorView     = document.getElementById('monitorView');
+const chatMessages    = document.getElementById('chatMessages');
+const chatWelcome     = document.getElementById('chatWelcome');
+const userInput       = document.getElementById('userInput');
+const sendBtn         = document.getElementById('sendBtn');
+const newChatBtn      = document.getElementById('newChatBtn');
+const historyList     = document.getElementById('historyList');
+const chatTitle       = document.getElementById('chatTitle');
 
-// // ============================================
-// // INICIALIZAÇÃO
-// // ============================================
-// document.addEventListener('DOMContentLoaded', () => {
-//     loadChatHistory();
-//     setupEventListeners();
-//     createNewChat();
-// });
+const tabChat         = document.getElementById('tabChat');
+const tabMonitor      = document.getElementById('tabMonitor');
+const configBtn       = document.getElementById('configBtn');
 
-// // ============================================
-// // EVENT LISTENERS
-// // ============================================
-// function setupEventListeners() {
-//     // Enviar mensagem
-//     sendBtn.addEventListener('click', handleSendMessage);
-//     userInput.addEventListener('keypress', (e) => {
-//         if (e.key === 'Enter' && !e.shiftKey) {
-//             e.preventDefault();
-//             handleSendMessage();
-//         }
-//     });
+const grafanaFrame         = document.getElementById('grafanaFrame');
+const grafanaPlaceholder   = document.getElementById('grafanaPlaceholder');
+const grafanaUrlDisplay    = document.getElementById('grafanaUrlDisplay');
+const configGrafanaBtn     = document.getElementById('configGrafanaBtn');
+const openConfigFromPlaceholder = document.getElementById('openConfigFromPlaceholder');
 
-//     // Novo chat
-//     newChatBtn.addEventListener('click', createNewChat);
-// }
+const configModal     = document.getElementById('configModal');
+const grafanaUrlInput = document.getElementById('grafanaUrlInput');
+const apiUrlInput     = document.getElementById('apiUrlInput');
+const closeModal      = document.getElementById('closeModal');
+const cancelConfig    = document.getElementById('cancelConfig');
+const saveConfig      = document.getElementById('saveConfig');
 
-// // ============================================
-// // GERENCIAMENTO DE CHAT
-// // ============================================
+// ============================================
+// INICIALIZAÇÃO
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    loadGrafanaUrl();
+    setupEventListeners();
+    createNewChat();
+    loadChatHistory();
+});
 
-// /**
-//  * Cria uma nova conversa
-//  */
-// async function createNewChat() {
-//     try {
-//         // Limpa a interface
-//     currentChatId = null;
-//     currentMessages = [];
-//     chatMessages.innerHTML = '';
-//     chatTitle.textContent = 'Novo Planejamento';
-//     userInput.value = '';
-//     userInput.focus();
+// ============================================
+// EVENT LISTENERS
+// ============================================
+function setupEventListeners() {
+    // Chat
+    sendBtn.addEventListener('click', handleSendMessage);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    });
+    newChatBtn.addEventListener('click', createNewChat);
 
-//     // Cria nova conversa no backend
-//     const response = await fetch(`${API_BASE_URL}/api/chats`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//             title: 'Novo Planejamento',
-//             createdAt: new Date().toISOString()
-//         })
-//     });
+    // Tabs
+    tabChat.addEventListener('click', () => switchTab('chat'));
+    tabMonitor.addEventListener('click', () => switchTab('monitor'));
 
-//     if (response.ok) {
-//         const data = await response.json();
-//         currentChatId = data.chatId || data.id;
-//         chatTitle.textContent = data.title || 'Novo Planejamento';
-        
-//         // Recarrega histórico
-//         loadChatHistory();
-//     } else {
-//         console.warn('Erro ao criar chat no backend, usando modo local');
-//         // Fallback: cria ID local temporário
-//         currentChatId = `local_${Date.now()}`;
-//     }
-//     } catch (error) {
-//         console.error('Erro ao criar novo chat:', error);
-//         // Fallback: cria ID local temporário
-//         currentChatId = `local_${Date.now()}`;
-//     }
-// }
+    // Config modal
+    configBtn.addEventListener('click', openConfigModal);
+    configGrafanaBtn.addEventListener('click', openConfigModal);
+    openConfigFromPlaceholder.addEventListener('click', openConfigModal);
+    closeModal.addEventListener('click', closeConfigModal);
+    cancelConfig.addEventListener('click', closeConfigModal);
+    saveConfig.addEventListener('click', handleSaveConfig);
 
-// /**
-//  * Carrega uma conversa específica do histórico
-//  */
-// async function loadChat(chatId) {
-//     try {
-//         const response = await fetch(`${API_BASE_URL}/api/chats/${chatId}`);
-        
-//         if (!response.ok) {
-//             throw new Error('Chat não encontrado');
-//         }
+    // Fechar modal ao clicar fora
+    configModal.addEventListener('click', (e) => {
+        if (e.target === configModal) closeConfigModal();
+    });
+}
 
-//         const chatData = await response.json();
-        
-//         // Atualiza estado
-//         currentChatId = chatData.id || chatData.chatId;
-//         currentMessages = chatData.messages || [];
-//         chatTitle.textContent = chatData.title || 'Planejamento';
+// ============================================
+// TROCA DE ABAS
+// ============================================
+function switchTab(tab) {
+    activeTab = tab;
 
-//         // Renderiza mensagens
-//         renderMessages(currentMessages);
+    if (tab === 'chat') {
+        tabChat.classList.add('active');
+        tabMonitor.classList.remove('active');
 
-//         // Atualiza histórico
-//         loadChatHistory();
-//     } catch (error) {
-//         console.error('Erro ao carregar chat:', error);
-//         alert('Erro ao carregar conversa. Tente novamente.');
-//     }
-// }
+        chatView.classList.remove('hidden');
+        monitorView.classList.add('hidden');
+        sidebar.classList.remove('hidden');
+        appContainer.classList.remove('monitor-mode');
 
-// /**
-//  * Salva mensagem no backend
-//  */
-// async function saveMessage(sender, content) {
-//     if (!currentChatId) {
-//         // Se não tem chatId, cria um novo chat primeiro
-//         await createNewChat();
-//     }
+        chatTitle.textContent = currentMessages.length
+            ? chatTitle.textContent
+            : 'Novo Planejamento';
+    } else {
+        tabMonitor.classList.add('active');
+        tabChat.classList.remove('active');
 
-//     const message = {
-//         sender: sender, // 'user' ou 'ai'
-//         content: content,
-//         timestamp: new Date().toISOString()
-//     };
+        monitorView.classList.remove('hidden');
+        chatView.classList.add('hidden');
+        sidebar.classList.add('hidden');
+        appContainer.classList.add('monitor-mode');
+    }
+}
 
-//     try {
-//         const response = await fetch(`${API_BASE_URL}/api/chats/${currentChatId}/messages`, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(message)
-//         });
+// ============================================
+// GRAFANA
+// ============================================
+function loadGrafanaUrl() {
+    if (grafanaUrl) {
+        grafanaUrlDisplay.textContent = grafanaUrl;
+        grafanaFrame.src = grafanaUrl;
+        grafanaFrame.classList.remove('hidden');
+        grafanaPlaceholder.classList.add('hidden');
+    } else {
+        grafanaUrlDisplay.textContent = 'Nenhuma URL configurada';
+        grafanaFrame.classList.add('hidden');
+        grafanaPlaceholder.classList.remove('hidden');
+    }
+}
 
-//         if (response.ok) {
-//             const data = await response.json();
-//             return data;
-//         } else {
-//             console.warn('Erro ao salvar mensagem no backend');
-//             // Fallback: salva localmente
-//             saveMessageLocally(message);
-//         }
-//     } catch (error) {
-//         console.error('Erro ao salvar mensagem:', error);
-//         // Fallback: salva localmente
-//         saveMessageLocally(message);
-//     }
-// }
+// ============================================
+// MODAL DE CONFIGURAÇÃO
+// ============================================
+function openConfigModal() {
+    grafanaUrlInput.value = grafanaUrl;
+    apiUrlInput.value = API_BASE_URL;
+    configModal.classList.remove('hidden');
+    grafanaUrlInput.focus();
+}
 
-// /**
-//  * Fallback: salva mensagem no localStorage
-//  */
-// function saveMessageLocally(message) {
-//     const localChats = JSON.parse(localStorage.getItem('agroChats') || '{}');
-//     if (!localChats[currentChatId]) {
-//         localChats[currentChatId] = {
-//             id: currentChatId,
-//             title: chatTitle.textContent,
-//             messages: [],
-//             createdAt: new Date().toISOString()
-//         };
-//     }
-//     localChats[currentChatId].messages.push(message);
-//     localStorage.setItem('agroChats', JSON.stringify(localChats));
-// }
+function closeConfigModal() {
+    configModal.classList.add('hidden');
+}
 
-// // ============================================
-// // ENVIO DE MENSAGENS
-// // ============================================
+function handleSaveConfig() {
+    const newGrafanaUrl = grafanaUrlInput.value.trim();
+    const newApiUrl = apiUrlInput.value.trim() || DEFAULT_API_URL;
 
-// async function handleSendMessage() {
-//     const messageText = userInput.value.trim();
-//     if (!messageText) return;
+    grafanaUrl = newGrafanaUrl;
+    API_BASE_URL = newApiUrl;
 
-//     // Adiciona mensagem do usuário na interface
-//     addMessageToUI('user', messageText);
-//     userInput.value = '';
-//     userInput.focus();
+    localStorage.setItem('agroGrafanaUrl', grafanaUrl);
+    localStorage.setItem('agroApiUrl', API_BASE_URL);
 
-//     // Salva mensagem do usuário
-//     await saveMessage('user', messageText);
+    loadGrafanaUrl();
+    closeConfigModal();
+}
 
-//     // Atualiza título se for primeira mensagem
-//     if (currentMessages.length === 0) {
-//         const newTitle = messageText.length > 30 
-//             ? messageText.substring(0, 30) + '...' 
-//             : messageText;
-//         chatTitle.textContent = newTitle;
-        
-//         // Atualiza título no backend
-//         await updateChatTitle(currentChatId, newTitle);
-//     }
+// ============================================
+// GERENCIAMENTO DE CHAT
+// ============================================
+// ============================================
+// WELCOME STATE
+// ============================================
+function showWelcome() {
+    chatWelcome?.classList.remove('hidden');
+}
 
-//     // Mostra indicador de digitação
-//     showTypingIndicator();
+function hideWelcome() {
+    chatWelcome?.classList.add('hidden');
+}
 
-//     try {
-//         // Envia para o backend/IA
-//         const response = await fetch(`${API_BASE_URL}/api/chat`, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({
-//                 message: messageText,
-//                 chatId: currentChatId,
-//                 history: currentMessages.slice(-10) // Últimas 10 mensagens para contexto
-//             })
-//         });
+// Chip de sugestão — acessível via onclick no HTML
+window.useSuggestion = function(text) {
+    userInput.value = text;
+    userInput.focus();
+    handleSendMessage();
+};
 
-//         hideTypingIndicator();
+// ============================================
+// GERENCIAMENTO DE CHAT
+// ============================================
+async function createNewChat() {
+    currentChatId = null;
+    currentMessages = [];
+    chatMessages.innerHTML = '';
+    chatTitle.textContent = 'Novo Planejamento';
+    userInput.value = '';
+    showWelcome();
+    userInput.focus();
 
-//         if (response.ok) {
-//             const data = await response.json();
-//             const aiResponse = data.reply || data.message || 'Não consegui processar sua mensagem.';
-            
-//             // Adiciona resposta da IA
-//             addMessageToUI('ai', aiResponse);
-//             await saveMessage('ai', aiResponse);
-//         } else {
-//             throw new Error('Erro na resposta do servidor');
-//         }
-//     } catch (error) {
-//         hideTypingIndicator();
-//         console.error('Erro ao enviar mensagem:', error);
-//         const errorMsg = 'Erro ao conectar com o servidor. Verifique sua conexão.';
-//         addMessageToUI('ai', errorMsg);
-//     }
-// }
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chats`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: 'Novo Planejamento', createdAt: new Date().toISOString() })
+        });
 
-// // ============================================
-// // INTERFACE DO CHAT
-// // ============================================
+        if (response.ok) {
+            const data = await response.json();
+            currentChatId = data.chatId || data.id;
+            loadChatHistory();
+        } else {
+            currentChatId = `local_${Date.now()}`;
+        }
+    } catch {
+        currentChatId = `local_${Date.now()}`;
+    }
+}
 
-// function addMessageToUI(sender, content) {
-//     const message = {
-//         sender: sender,
-//         content: content,
-//         timestamp: new Date()
-//     };
+async function loadChat(chatId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chats/${chatId}`);
+        if (!response.ok) throw new Error('Chat não encontrado');
 
-//     currentMessages.push(message);
-//     renderMessage(message);
-//     scrollToBottom();
-// }
+        const chatData = await response.json();
+        currentChatId = chatData.id || chatData.chatId;
+        currentMessages = chatData.messages || [];
+        chatTitle.textContent = chatData.title || 'Planejamento';
 
-// function renderMessages(messages) {
-//     chatMessages.innerHTML = '';
-//     messages.forEach(msg => renderMessage(msg));
-//     scrollToBottom();
-// }
+        renderMessages(currentMessages);
+        loadChatHistory();
+    } catch (error) {
+        console.error('Erro ao carregar chat:', error);
+    }
+}
 
-// function renderMessage(message) {
-//     const messageRow = document.createElement('div');
-//     messageRow.className = `message-row ${message.sender}`;
+// ============================================
+// ENVIO DE MENSAGENS
+// ============================================
+async function handleSendMessage() {
+    const messageText = userInput.value.trim();
+    if (!messageText) return;
 
-//     const messageContent = document.createElement('div');
-//     messageContent.className = 'message-content';
+    addMessageToUI('user', messageText);
+    userInput.value = '';
+    userInput.focus();
 
-//     // Avatar
-//     const avatar = document.createElement('div');
-//     avatar.className = `avatar ${message.sender === 'user' ? 'user-av' : 'ai-av'}`;
-    
-//     if (message.sender === 'user') {
-//         avatar.textContent = 'X';
-//     } else {
-//         const avatarAi = document.createElement('div');
-//         avatarAi.className = 'avatar-ai';
-//         const img = document.createElement('img');
-//         img.src = 'assets/img/avatar_ai.png';
-//         img.alt = 'AgroIA';
-//         avatarAi.appendChild(img);
-//         avatar.appendChild(avatarAi);
-//     }
+    // Atualiza título na primeira mensagem
+    if (currentMessages.length === 1) {
+        const newTitle = messageText.length > 40
+            ? messageText.substring(0, 40) + '...'
+            : messageText;
+        chatTitle.textContent = newTitle;
+    }
 
-//     // Texto
-//     const textDiv = document.createElement('div');
-//     textDiv.className = 'text';
-    
-//     // Se o conteúdo tiver múltiplas linhas (parágrafos)
-//     const paragraphs = message.content.split('\n');
-//     paragraphs.forEach(para => {
-//         if (para.trim()) {
-//             const p = document.createElement('p');
-//             p.textContent = para.trim();
-//             textDiv.appendChild(p);
-//         }
-//     });
+    showTypingIndicator();
 
-//     messageContent.appendChild(avatar);
-//     messageContent.appendChild(textDiv);
-//     messageRow.appendChild(messageContent);
-//     chatMessages.appendChild(messageRow);
-// }
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: messageText,
+                chatId: currentChatId,
+                history: currentMessages.slice(-10)
+            })
+        });
 
-// function showTypingIndicator() {
-//     const typingRow = document.createElement('div');
-//     typingRow.className = 'message-row ai';
-//     typingRow.id = 'typing-indicator';
-    
-//     const messageContent = document.createElement('div');
-//     messageContent.className = 'message-content';
-    
-//     const avatar = document.createElement('div');
-//     avatar.className = 'avatar ai-av';
-//     const avatarAi = document.createElement('div');
-//     avatarAi.className = 'avatar-ai';
-//     const img = document.createElement('img');
-//     img.src = 'assets/img/avatar_ai.png';
-//     avatarAi.appendChild(img);
-//     avatar.appendChild(avatarAi);
-    
-//     const textDiv = document.createElement('div');
-//     textDiv.className = 'text';
-//     textDiv.innerHTML = '<p>AgroIA está digitando<span class="typing-dots">...</span></p>';
-    
-//     messageContent.appendChild(avatar);
-//     messageContent.appendChild(textDiv);
-//     typingRow.appendChild(messageContent);
-//     chatMessages.appendChild(typingRow);
-//     scrollToBottom();
-// }
+        hideTypingIndicator();
 
-// function hideTypingIndicator() {
-//     const indicator = document.getElementById('typing-indicator');
-//     if (indicator) {
-//         indicator.remove();
-//     }
-// }
+        if (response.ok) {
+            const data = await response.json();
+            const aiResponse = data.reply || data.message || 'Resposta não disponível.';
+            addMessageToUI('ai', aiResponse);
+        } else {
+            throw new Error(`HTTP ${response.status}`);
+        }
+    } catch (error) {
+        hideTypingIndicator();
+        console.error('Erro ao enviar mensagem:', error);
+        addMessageToUI('ai', 'Não foi possível conectar ao servidor. Verifique se o backend está rodando e a URL está correta nas configurações (⚙).');
+    }
+}
 
-// function scrollToBottom() {
-//     chatMessages.scrollTop = chatMessages.scrollHeight;
-// }
+// ============================================
+// INTERFACE DO CHAT
+// ============================================
+function addMessageToUI(sender, content) {
+    hideWelcome();
+    const message = { sender, content, timestamp: new Date() };
+    currentMessages.push(message);
+    renderMessage(message);
+    scrollToBottom();
+}
 
-// // ============================================
-// // HISTÓRICO DE CONVERSAS
-// // ============================================
+function renderMessages(messages) {
+    chatMessages.innerHTML = '';
+    messages.forEach(msg => renderMessage(msg));
+    scrollToBottom();
+}
 
-// /**
-//  * Carrega histórico de conversas do backend
-//  */
-// async function loadChatHistory() {
-//     try {
-//         const response = await fetch(`${API_BASE_URL}/api/chats`);
-        
-//         if (response.ok) {
-//             const chats = await response.json();
-//             renderChatHistory(chats);
-//         } else {
-//             throw new Error('Erro ao carregar histórico');
-//         }
-//     } catch (error) {
-//         console.error('Erro ao carregar histórico do backend:', error);
-//         // Fallback: carrega do localStorage
-//         loadChatHistoryFromLocal();
-//     }
-// }
+function renderMessage(message) {
+    const messageRow = document.createElement('div');
+    messageRow.className = `message-row ${message.sender}`;
 
-// /**
-//  * Fallback: carrega histórico do localStorage
-//  */
-// function loadChatHistoryFromLocal() {
-//     const localChats = JSON.parse(localStorage.getItem('agroChats') || '{}');
-//     const chats = Object.values(localChats).sort((a, b) => 
-//         new Date(b.createdAt || b.updatedAt) - new Date(a.createdAt || a.updatedAt)
-//     );
-//     renderChatHistory(chats);
-// }
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
 
-// /**
-//  * Renderiza o histórico na sidebar
-//  */
-// function renderChatHistory(chats) {
-//     if (!chats || chats.length === 0) {
-//         historyList.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-secondary);">Nenhuma conversa ainda</p>';
-//         return;
-//     }
+    const avatar = document.createElement('div');
+    avatar.className = `avatar ${message.sender === 'user' ? 'user-av' : 'ai-av'}`;
 
-//     // Agrupa conversas por data
-//     const grouped = groupChatsByDate(chats);
-    
-//     historyList.innerHTML = '';
+    if (message.sender === 'user') {
+        avatar.textContent = 'A';
+    } else {
+        const avatarAi = document.createElement('div');
+        avatarAi.className = 'avatar-ai';
+        const img = document.createElement('img');
+        img.src = 'assets/img/avatar_ai.png';
+        img.alt = 'AgroIA';
+        avatarAi.appendChild(img);
+        avatar.appendChild(avatarAi);
+    }
 
-//     // Renderiza por grupos de data
-//     Object.keys(grouped).forEach(dateLabel => {
-//         const label = document.createElement('p');
-//         label.className = 'history-label';
-//         label.textContent = dateLabel;
-//         historyList.appendChild(label);
+    const textDiv = document.createElement('div');
+    textDiv.className = 'text';
 
-//         grouped[dateLabel].forEach(chat => {
-//             const item = createHistoryItem(chat);
-//             historyList.appendChild(item);
-//         });
-//     });
-// }
+    const paragraphs = message.content.split('\n');
+    paragraphs.forEach(para => {
+        if (para.trim()) {
+            const p = document.createElement('p');
+            p.textContent = para.trim();
+            textDiv.appendChild(p);
+        }
+    });
 
-// /**
-//  * Agrupa conversas por data (Hoje, Ontem, ou data específica)
-//  */
-// function groupChatsByDate(chats) {
-//     const today = new Date();
-//     today.setHours(0, 0, 0, 0);
-    
-//     const yesterday = new Date(today);
-//     yesterday.setDate(yesterday.getDate() - 1);
+    messageContent.appendChild(avatar);
+    messageContent.appendChild(textDiv);
+    messageRow.appendChild(messageContent);
+    chatMessages.appendChild(messageRow);
+}
 
-//     const grouped = {};
+function showTypingIndicator() {
+    const typingRow = document.createElement('div');
+    typingRow.className = 'message-row ai';
+    typingRow.id = 'typing-indicator';
 
-//     chats.forEach(chat => {
-//         const chatDate = new Date(chat.createdAt || chat.updatedAt || Date.now());
-//         chatDate.setHours(0, 0, 0, 0);
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
 
-//         let label;
-//         if (chatDate.getTime() === today.getTime()) {
-//             label = 'Hoje';
-//         } else if (chatDate.getTime() === yesterday.getTime()) {
-//             label = 'Ontem';
-//         } else {
-//             // Formata data: "12 de fevereiro"
-//             label = chatDate.toLocaleDateString('pt-BR', {
-//                 day: 'numeric',
-//                 month: 'long'
-//             });
-//         }
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar ai-av';
+    const avatarAi = document.createElement('div');
+    avatarAi.className = 'avatar-ai';
+    const img = document.createElement('img');
+    img.src = 'assets/img/avatar_ai.png';
+    avatarAi.appendChild(img);
+    avatar.appendChild(avatarAi);
 
-//         if (!grouped[label]) {
-//             grouped[label] = [];
-//         }
-//         grouped[label].push(chat);
-//     });
+    const textDiv = document.createElement('div');
+    textDiv.className = 'text';
+    textDiv.innerHTML = '<p>AgroIA está digitando<span class="typing-dots">...</span></p>';
 
-//     return grouped;
-// }
+    messageContent.appendChild(avatar);
+    messageContent.appendChild(textDiv);
+    typingRow.appendChild(messageContent);
+    chatMessages.appendChild(typingRow);
+    scrollToBottom();
+}
 
-// /**
-//  * Cria um item do histórico
-//  */
-// function createHistoryItem(chat) {
-//     const item = document.createElement('div');
-//     item.className = 'history-item';
-//     item.dataset.chatId = chat.id || chat.chatId;
-    
-//     // Título da conversa (primeira mensagem ou título salvo)
-//     const title = chat.title || 
-//                   (chat.messages && chat.messages.length > 0 
-//                    ? chat.messages[0].content.substring(0, 30) + '...' 
-//                    : 'Sem título');
-    
-//     item.textContent = title;
-//     item.title = title; // Tooltip com título completo
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) indicator.remove();
+}
 
-//     // Destaque se for a conversa atual
-//     if (chat.id === currentChatId || chat.chatId === currentChatId) {
-//         item.classList.add('active');
-//     }
+function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-//     // Event listener para carregar conversa
-//     item.addEventListener('click', () => {
-//         loadChat(chat.id || chat.chatId);
-//     });
+// ============================================
+// HISTÓRICO DE CONVERSAS
+// ============================================
+async function loadChatHistory() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/chats`);
+        if (response.ok) {
+            const chats = await response.json();
+            renderChatHistory(chats);
+        } else {
+            throw new Error('Erro ao carregar histórico');
+        }
+    } catch {
+        loadChatHistoryFromLocal();
+    }
+}
 
-//     return item;
-// }
+function loadChatHistoryFromLocal() {
+    const localChats = JSON.parse(localStorage.getItem('agroChats') || '{}');
+    const chats = Object.values(localChats).sort((a, b) =>
+        new Date(b.createdAt || b.updatedAt) - new Date(a.createdAt || a.updatedAt)
+    );
+    renderChatHistory(chats);
+}
 
-// /**
-//  * Atualiza título da conversa no backend
-//  */
-// async function updateChatTitle(chatId, title) {
-//     try {
-//         await fetch(`${API_BASE_URL}/api/chats/${chatId}`, {
-//             method: 'PATCH',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({ title })
-//         });
-//     } catch (error) {
-//         console.error('Erro ao atualizar título:', error);
-//     }
-// }
+function renderChatHistory(chats) {
+    if (!chats || chats.length === 0) {
+        historyList.innerHTML = '<p style="padding:20px;text-align:center;color:var(--text-secondary);font-size:0.85rem;">Nenhuma conversa ainda</p>';
+        return;
+    }
+
+    const grouped = groupChatsByDate(chats);
+    historyList.innerHTML = '';
+
+    Object.keys(grouped).forEach(dateLabel => {
+        const label = document.createElement('p');
+        label.className = 'history-label';
+        label.textContent = dateLabel;
+        historyList.appendChild(label);
+
+        grouped[dateLabel].forEach(chat => {
+            historyList.appendChild(createHistoryItem(chat));
+        });
+    });
+}
+
+function groupChatsByDate(chats) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const grouped = {};
+
+    chats.forEach(chat => {
+        const chatDate = new Date(chat.createdAt || chat.updatedAt || Date.now());
+        chatDate.setHours(0, 0, 0, 0);
+
+        let label;
+        if (chatDate.getTime() === today.getTime()) {
+            label = 'Hoje';
+        } else if (chatDate.getTime() === yesterday.getTime()) {
+            label = 'Ontem';
+        } else {
+            label = chatDate.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+        }
+
+        if (!grouped[label]) grouped[label] = [];
+        grouped[label].push(chat);
+    });
+
+    return grouped;
+}
+
+function createHistoryItem(chat) {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.dataset.chatId = chat.id || chat.chatId;
+
+    const title = chat.title ||
+        (chat.messages && chat.messages.length > 0
+            ? chat.messages[0].content.substring(0, 35) + '...'
+            : 'Sem título');
+
+    item.textContent = title;
+    item.title = title;
+
+    if ((chat.id || chat.chatId) === currentChatId) {
+        item.classList.add('active');
+    }
+
+    item.addEventListener('click', () => loadChat(chat.id || chat.chatId));
+    return item;
+}
