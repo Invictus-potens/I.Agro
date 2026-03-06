@@ -9,6 +9,7 @@ class ForecastHour(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     forecast_day_id: Optional[int] = Field(default=None, foreign_key="forecast_days.id")
+    location_id: Optional[int] = Field(default=None, foreign_key="locations.id")
     time: str
     temp_c: float
     condition_text: str
