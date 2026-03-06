@@ -13,7 +13,7 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API CRUD para gerenciar previsão de tempo e localidades agrícolas'
     },
-    servers: [{ url: 'http://localhost:3000', description: 'Local server' }]
+    servers: [{ url: 'http://170.254.78.193:3000', description: 'Local server' }]
   },
   apis: ['./server.js']
 };
