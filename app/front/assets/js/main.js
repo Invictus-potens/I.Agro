@@ -1,7 +1,7 @@
 // ============================================
 // CONFIGURAÇÃO
 // ============================================
-const DEFAULT_API_URL = 'http://localhost:3000';
+const DEFAULT_API_URL = 'http://localhost:8000';
 
 let API_BASE_URL = localStorage.getItem('agroApiUrl') || DEFAULT_API_URL;
 let grafanaUrl = localStorage.getItem('agroGrafanaUrl') || '';

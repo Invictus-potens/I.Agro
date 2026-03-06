@@ -76,6 +76,19 @@ const CurrentWeather = sequelize.define('CurrentWeather', {
   uv: { type: DataTypes.FLOAT }
 }, { tableName: 'current_weather', timestamps: false });
 
+const Chat = sequelize.define('Chat', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  title: { type: DataTypes.STRING(255), defaultValue: 'Nova Conversa' },
+  location_id: { type: DataTypes.INTEGER, allowNull: true }
+}, { tableName: 'chats', timestamps: true, createdAt: 'created_at', updatedAt: 'updated_at' });
+
+const ChatMessage = sequelize.define('ChatMessage', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  chat_id: { type: DataTypes.INTEGER, allowNull: false },
+  role: { type: DataTypes.STRING(20), allowNull: false },
+  content: { type: DataTypes.TEXT, allowNull: false }
+}, { tableName: 'chat_messages', timestamps: true, createdAt: 'created_at', updatedAt: false });
+
 // Associations
 Location.hasMany(ForecastDay, { foreignKey: 'location_id', as: 'forecasts' });
 ForecastDay.belongsTo(Location, { foreignKey: 'location_id', as: 'location' });
@@ -83,6 +96,11 @@ ForecastDay.hasMany(ForecastHour, { foreignKey: 'forecast_day_id', as: 'hours' }
 ForecastHour.belongsTo(ForecastDay, { foreignKey: 'forecast_day_id', as: 'forecast_day' });
 Location.hasOne(CurrentWeather, { foreignKey: 'location_id', as: 'current_weather' });
 CurrentWeather.belongsTo(Location, { foreignKey: 'location_id', as: 'location' });
+
+Chat.hasMany(ChatMessage, { foreignKey: 'chat_id', as: 'messages', onDelete: 'CASCADE' });
+ChatMessage.belongsTo(Chat, { foreignKey: 'chat_id', as: 'chat' });
+Location.hasMany(Chat, { foreignKey: 'location_id', as: 'chats' });
+Chat.belongsTo(Location, { foreignKey: 'location_id', as: 'location' });
 
 const app = express();
 app.use(cors());
@@ -682,6 +700,80 @@ app.delete('/current-weather/:id', async (req, res) => {
     await obj.destroy();
     res.status(204).send();
   } catch (err) { console.error(err); res.status(500).json({ error: 'server error' }); }
+});
+
+// ========== CHATS ==========
+const PYTHON_API_URL = (process.env.PYTHON_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+
+app.get('/api/chats', async (req, res) => {
+  try {
+    const chats = await Chat.findAll({
+      order: [['updated_at', 'DESC']],
+      include: [{ model: ChatMessage, as: 'messages', attributes: ['id'] }]
+    });
+    res.json(chats);
+  } catch (err) { console.error(err); res.status(500).json({ error: 'server error' }); }
+});
+
+app.post('/api/chats', async (req, res) => {
+  try {
+    const { title, location_id } = req.body;
+    const chat = await Chat.create({ title: title || 'Nova Conversa', location_id: location_id || null });
+    res.status(201).json({ id: chat.id, chatId: chat.id, title: chat.title, created_at: chat.created_at });
+  } catch (err) { console.error(err); res.status(400).json({ error: 'bad request' }); }
+});
+
+app.get('/api/chats/:id', async (req, res) => {
+  try {
+    const chat = await Chat.findByPk(req.params.id, {
+      include: [{ model: ChatMessage, as: 'messages', order: [['created_at', 'ASC']] }]
+    });
+    if (!chat) return res.status(404).json({ error: 'not found' });
+    res.json(chat);
+  } catch (err) { console.error(err); res.status(500).json({ error: 'server error' }); }
+});
+
+app.delete('/api/chats/:id', async (req, res) => {
+  try {
+    const chat = await Chat.findByPk(req.params.id);
+    if (!chat) return res.status(404).json({ error: 'not found' });
+    await ChatMessage.destroy({ where: { chat_id: chat.id } });
+    await chat.destroy();
+    res.status(204).send();
+  } catch (err) { console.error(err); res.status(500).json({ error: 'server error' }); }
+});
+
+app.post('/api/chat', async (req, res) => {
+  const { message, chatId, history, locationId } = req.body;
+  try {
+    const pyRes = await fetch(`${PYTHON_API_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, history: history || [], locationId: locationId || null })
+    });
+    if (!pyRes.ok) {
+      const err = await pyRes.text();
+      return res.status(502).json({ error: 'python api error', detail: err });
+    }
+    const data = await pyRes.json();
+    const reply = data.reply;
+
+    if (chatId && !String(chatId).startsWith('local_')) {
+      const chat = await Chat.findByPk(chatId);
+      if (chat) {
+        await ChatMessage.bulkCreate([
+          { chat_id: chat.id, role: 'user', content: message },
+          { chat_id: chat.id, role: 'assistant', content: reply }
+        ]);
+        await chat.update({ updated_at: new Date() });
+      }
+    }
+
+    res.json({ reply });
+  } catch (err) {
+    console.error(err);
+    res.status(502).json({ error: 'Erro ao processar mensagem. Verifique se a API Python está rodando.' });
+  }
 });
 
 // Start

@@ -1,14 +1,11 @@
 """
-Lógica do chat: cliente Node.js, Gemini e handler.
+Lógica do chat: acesso ao banco de dados, Gemini e handler.
 """
 import os
 from typing import Any
 
-import httpx
 import google.generativeai as genai
 
-# Configuração a partir do ambiente
-NODE_API_URL = os.getenv("NODE_API_URL", "http://localhost:3000").rstrip("/")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 SYSTEM_INSTRUCTION = (
@@ -20,18 +17,33 @@ SYSTEM_INSTRUCTION = (
 
 
 def get_location_with_weather(location_id: int) -> dict[str, Any] | None:
-    """Busca localidade com clima e previsão na API js."""
+    """Busca localidade com clima e previsão diretamente no banco de dados."""
     try:
-        with httpx.Client(timeout=10.0) as client:
-            r = client.get(f"{NODE_API_URL}/locations/{location_id}")
-            r.raise_for_status()
-            return r.json()
-    except (httpx.HTTPError, httpx.TimeoutException):
+        from sqlmodel import Session, select
+        from app.models import Location, CurrentWeather, ForecastDay
+        from app.services.database import engine
+
+        with Session(engine) as session:
+            location = session.get(Location, location_id)
+            if not location:
+                return None
+            cw = session.exec(
+                select(CurrentWeather).where(CurrentWeather.location_id == location_id)
+            ).first()
+            forecasts = session.exec(
+                select(ForecastDay).where(ForecastDay.location_id == location_id)
+            ).all()
+            return {
+                "name": location.name,
+                "current_weather": cw.model_dump() if cw else None,
+                "forecasts": [f.model_dump() for f in forecasts],
+            }
+    except Exception:
         return None
 
 
 def build_weather_context(data: dict[str, Any]) -> str:
-    """Transforma o JSON do Node em um parágrafo de contexto para o prompt."""
+    """Transforma o JSON do banco em um parágrafo de contexto para o prompt."""
     parts = []
     name = data.get("name") or "Local"
     parts.append(f"Local: {name}.")
@@ -58,18 +70,17 @@ def build_weather_context(data: dict[str, Any]) -> str:
     return " ".join(parts) if parts else "Sem dados de clima disponíveis."
 
 
-def call_gemini(message: str, contexto_clima: str | None = None) -> str:
+def call_gemini(message: str, history: list | None = None, contexto_clima: str | None = None) -> str:
     """Chama o Gemini com message, contexto de clima opcional."""
     if not GEMINI_API_KEY:
         return "Erro: GEMINI_API_KEY não configurada. Configure a chave no servidor."
 
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel(
-        "gemini-pro",
+        "gemini-2.5-flash",
         system_instruction=SYSTEM_INSTRUCTION,
     )
 
-    # Monta todo o conteúdo: contexto de clima + histórico + mensagem atual
     content_parts = []
     if contexto_clima:
         content_parts.append(f"Dados atuais da região:\n{contexto_clima}\n\n")
@@ -98,7 +109,7 @@ def handle_chat(
     location_id: int | None = None,
 ) -> str:
     """
-    Handler principal: valida message, opcionalmente busca dados no Node, chama Gemini e retorna a resposta.
+    Handler principal: valida message, busca dados no banco, chama Gemini e retorna a resposta.
     """
     msg = (message or "").strip()
     if not msg:

@@ -5,3 +5,4 @@ from app.models.current_weather import CurrentWeather
 from app.models.forecast_day import ForecastDay
 from app.models.forecast_hour import ForecastHour
 from app.models.weather_data import WeatherData
+from app.models.chat import Chat, ChatMessage
