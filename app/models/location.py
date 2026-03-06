@@ -12,6 +12,5 @@ class Location(SQLModel, table=True):
     name: str = Field(index=True)
     lat: float
     lon: float
-    state: Optional[str] = None
     current_weather: List["CurrentWeather"] = Relationship(back_populates="location")
     forecasts: List["ForecastDay"] = Relationship(back_populates="location")

@@ -7,3 +7,6 @@
 /.venv
 /venv
 *.pyc
+node_modules/
+dist/
+.claude/
