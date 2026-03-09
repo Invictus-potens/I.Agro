@@ -20,8 +20,8 @@ def get_location_with_weather(location_id: int) -> dict[str, Any] | None:
     """Busca localidade com clima e previsão diretamente no banco de dados."""
     try:
         from sqlmodel import Session, select
-        from app.models import Location, CurrentWeather, ForecastDay
-        from app.services.database import engine
+        from backend.models import Location, CurrentWeather, ForecastDay
+        from backend.services.database import engine
 
         with Session(engine) as session:
             location = session.get(Location, location_id)

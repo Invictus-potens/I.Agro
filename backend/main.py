@@ -21,10 +21,10 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlmodel import Session, select
 
-from app.models import Location, CurrentWeather, ForecastDay, ForecastHour
-from app.models.chat import Chat, ChatMessage
-from app.services.database import get_session
-from chat import handle_chat
+from backend.models import Location, CurrentWeather, ForecastDay, ForecastHour
+from backend.models.chat import Chat, ChatMessage
+from backend.services.database import get_session
+from backend.chat import handle_chat
 
 app = FastAPI(title="Farmers Companion API", version="1.0.0")
 
@@ -37,7 +37,7 @@ app.add_middleware(
 )
 
 # ── Frontend estático ─────────────────────────────────────────────────────────
-_front = _root / "app" / "front"
+_front = _root / "frontend"
 app.mount("/assets", StaticFiles(directory=str(_front / "assets")), name="assets")
 
 
@@ -129,6 +129,10 @@ class ForecastDayUpdate(BaseModel):
 class ChatCreate(BaseModel):
     title: Optional[str] = "Nova Conversa"
     location_id: Optional[int] = None
+
+
+class ChatUpdate(BaseModel):
+    title: Optional[str] = None
 
 
 class ChatBody(BaseModel):
@@ -376,6 +380,20 @@ def get_chat(id: int, session: Session = Depends(get_session)):
         .order_by(ChatMessage.created_at)
     ).all()
     return {**chat.model_dump(), "messages": [m.model_dump() for m in msgs]}
+
+
+@app.put("/api/chats/{id}")
+def update_chat(id: int, body: ChatUpdate, session: Session = Depends(get_session)):
+    chat = session.get(Chat, id)
+    if not chat:
+        raise HTTPException(404, "not found")
+    if body.title is not None:
+        chat.title = body.title
+    chat.updated_at = datetime.utcnow()
+    session.add(chat)
+    session.commit()
+    session.refresh(chat)
+    return {**chat.model_dump(), "chatId": chat.id}
 
 
 @app.delete("/api/chats/{id}", status_code=204)

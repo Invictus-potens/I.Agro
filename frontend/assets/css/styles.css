@@ -296,14 +296,49 @@ body::before {
     margin: 1px 0;
     border-radius: 5px;
     cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     font-family: var(--font-body);
     font-size: 0.83rem;
     color: var(--grain-400);
     transition: background-color 0.15s, color 0.15s;
     border-left: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.history-item-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-item-delete {
+    visibility: hidden;
+    background: transparent !important;
+    border: none !important;
+    color: var(--harvest) !important;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s, visibility 0.15s;
+    box-shadow: none !important;
+    outline: none;
+}
+
+.history-item-delete:hover {
+    opacity: 1 !important;
+    background: transparent !important;
+}
+
+.history-item:hover .history-item-delete {
+    visibility: visible;
+    opacity: 0.7;
 }
 
 .history-item:hover {
