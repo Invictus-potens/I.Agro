@@ -184,7 +184,7 @@ window.useSuggestion = function(text) {
 // ============================================
 // GERENCIAMENTO DE CHAT
 // ============================================
-async function createNewChat() {
+function createNewChat() {
     currentChatId = null;
     currentMessages = [];
     chatMessages.innerHTML = '';
@@ -192,24 +192,6 @@ async function createNewChat() {
     userInput.value = '';
     showWelcome();
     userInput.focus();
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/chats`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: 'Novo Planejamento', createdAt: new Date().toISOString() })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            currentChatId = data.chatId || data.id;
-            loadChatHistory();
-        } else {
-            currentChatId = `local_${Date.now()}`;
-        }
-    } catch {
-        currentChatId = `local_${Date.now()}`;
-    }
 }
 
 async function loadChat(chatId) {
@@ -219,13 +201,37 @@ async function loadChat(chatId) {
 
         const chatData = await response.json();
         currentChatId = chatData.id || chatData.chatId;
-        currentMessages = chatData.messages || [];
+        currentMessages = (chatData.messages || []).map(m => ({
+            sender: m.role === 'assistant' ? 'ai' : m.role,
+            content: m.content,
+            timestamp: m.created_at
+        }));
         chatTitle.textContent = chatData.title || 'Planejamento';
 
-        renderMessages(currentMessages);
+        chatMessages.innerHTML = '';
+        if (currentMessages.length > 0) {
+            hideWelcome();
+            currentMessages.forEach(msg => renderMessage(msg));
+            scrollToBottom();
+        } else {
+            showWelcome();
+        }
         loadChatHistory();
     } catch (error) {
         console.error('Erro ao carregar chat:', error);
+    }
+}
+
+async function saveChatTitle(chatId, title) {
+    if (!chatId || String(chatId).startsWith('local_')) return;
+    try {
+        await fetch(`${API_BASE_URL}/api/chats/${chatId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title })
+        });
+    } catch {
+        // silently ignore title save errors
     }
 }
 
@@ -235,6 +241,26 @@ async function loadChat(chatId) {
 async function handleSendMessage() {
     const messageText = userInput.value.trim();
     if (!messageText) return;
+
+    // Cria o chat no banco apenas na primeira mensagem
+    if (!currentChatId) {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/chats`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: 'Novo Planejamento', createdAt: new Date().toISOString() })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                currentChatId = data.chatId || data.id;
+                loadChatHistory();
+            } else {
+                currentChatId = `local_${Date.now()}`;
+            }
+        } catch {
+            currentChatId = `local_${Date.now()}`;
+        }
+    }
 
     addMessageToUI('user', messageText);
     userInput.value = '';
@@ -246,6 +272,7 @@ async function handleSendMessage() {
             ? messageText.substring(0, 40) + '...'
             : messageText;
         chatTitle.textContent = newTitle;
+        saveChatTitle(currentChatId, newTitle);
     }
 
     showTypingIndicator();
@@ -455,8 +482,21 @@ function createHistoryItem(chat) {
             ? chat.messages[0].content.substring(0, 35) + '...'
             : 'Sem título');
 
-    item.textContent = title;
-    item.title = title;
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'history-item-title';
+    titleSpan.textContent = title;
+    titleSpan.title = title;
+    item.appendChild(titleSpan);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'history-item-delete';
+    deleteBtn.title = 'Apagar conversa';
+    deleteBtn.innerHTML = '&#x2715;';
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteChat(chat.id || chat.chatId);
+    });
+    item.appendChild(deleteBtn);
 
     if ((chat.id || chat.chatId) === currentChatId) {
         item.classList.add('active');
@@ -464,4 +504,19 @@ function createHistoryItem(chat) {
 
     item.addEventListener('click', () => loadChat(chat.id || chat.chatId));
     return item;
+}
+
+async function deleteChat(chatId) {
+    if (!chatId || String(chatId).startsWith('local_')) return;
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/chats/${chatId}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error();
+        if (chatId === currentChatId) {
+            createNewChat();
+        } else {
+            loadChatHistory();
+        }
+    } catch {
+        console.error('Erro ao apagar conversa');
+    }
 }

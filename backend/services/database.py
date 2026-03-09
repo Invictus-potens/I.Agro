@@ -1,7 +1,7 @@
 from typing import Generator
 from sqlmodel import SQLModel, create_engine, Session
-from app.config import settings
-from app.models import User, Farm, Location, CurrentWeather, ForecastDay, ForecastHour
+from backend.config import settings
+from backend.models import User, Farm, Location, CurrentWeather, ForecastDay, ForecastHour
 
 engine = create_engine(settings.DATABASE_URL)
 
