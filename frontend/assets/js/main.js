@@ -370,7 +370,7 @@ function renderMessage(message) {
         avatarAi.className = 'avatar-ai';
         const img = document.createElement('img');
         img.src = 'assets/img/avatar_ai.png';
-        img.alt = 'AgroIA';
+        img.alt = 'I.Agro';
         avatarAi.appendChild(img);
         avatar.appendChild(avatarAi);
     }
@@ -412,7 +412,7 @@ function showTypingIndicator() {
 
     const textDiv = document.createElement('div');
     textDiv.className = 'text';
-    textDiv.innerHTML = '<p>AgroIA está digitando<span class="typing-dots">...</span></p>';
+    textDiv.innerHTML = '<p>I.Agro está digitando<span class="typing-dots">...</span></p>';
 
     messageContent.appendChild(avatar);
     messageContent.appendChild(textDiv);
