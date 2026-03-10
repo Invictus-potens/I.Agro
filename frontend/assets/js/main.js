@@ -1,10 +1,24 @@
 // ============================================
 // CONFIGURAÇÃO
 // ============================================
-const DEFAULT_API_URL = 'http://localhost:8000';
+const DEFAULT_API_URL = window.location.origin;
 
-let API_BASE_URL = localStorage.getItem('agroApiUrl') || DEFAULT_API_URL;
+let API_BASE_URL = DEFAULT_API_URL;
 let grafanaUrl = localStorage.getItem('agroGrafanaUrl') || '';
+
+function normalizeApiUrl(url) {
+    const rawValue = (url || '').trim();
+    if (!rawValue) return DEFAULT_API_URL;
+
+    let normalized = rawValue.replace(/\/+$/, '');
+
+    // Browsers block HTTPS pages from calling HTTP APIs (mixed content).
+    if (window.location.protocol === 'https:' && normalized.startsWith('http://')) {
+        normalized = normalized.replace(/^http:\/\//, 'https://');
+    }
+
+    return normalized;
+}
 
 // ============================================
 // ESTADO DA APLICAÇÃO
@@ -48,12 +62,30 @@ const saveConfig      = document.getElementById('saveConfig');
 // ============================================
 // INICIALIZAÇÃO
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await initializeApiUrl();
     loadGrafanaUrl();
     setupEventListeners();
     createNewChat();
     loadChatHistory();
 });
+
+async function initializeApiUrl() {
+    const savedApiUrl = localStorage.getItem('agroApiUrl');
+    if (savedApiUrl) {
+        API_BASE_URL = normalizeApiUrl(savedApiUrl);
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/config');
+        if (!response.ok) throw new Error('Config indisponível');
+        const config = await response.json();
+        API_BASE_URL = normalizeApiUrl(config.apiBaseUrl || DEFAULT_API_URL);
+    } catch {
+        API_BASE_URL = DEFAULT_API_URL;
+    }
+}
 
 // ============================================
 // EVENT LISTENERS
@@ -148,7 +180,7 @@ function closeConfigModal() {
 
 function handleSaveConfig() {
     const newGrafanaUrl = grafanaUrlInput.value.trim();
-    const newApiUrl = apiUrlInput.value.trim() || DEFAULT_API_URL;
+    const newApiUrl = normalizeApiUrl(apiUrlInput.value.trim() || DEFAULT_API_URL);
 
     grafanaUrl = newGrafanaUrl;
     API_BASE_URL = newApiUrl;

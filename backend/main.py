@@ -14,7 +14,7 @@ _root = Path(__file__).resolve().parent.parent
 load_dotenv(_root / ".env")
 sys.path.insert(0, str(_root))
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -44,6 +44,14 @@ app.mount("/assets", StaticFiles(directory=str(_front / "assets")), name="assets
 @app.get("/", include_in_schema=False)
 def index():
     return FileResponse(str(_front / "index.html"))
+
+
+@app.get("/api/config")
+def get_public_config(request: Request):
+    api_base_url = os.getenv("NODE_API_URL")
+    if not api_base_url:
+        api_base_url = str(request.base_url).rstrip("/")
+    return {"apiBaseUrl": api_base_url}
 
 
 # ── Schemas de request ────────────────────────────────────────────────────────
@@ -440,5 +448,5 @@ def api_chat(body: ChatBody, session: Session = Depends(get_session)):
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("PORT", "8000"))
+    port = int(os.getenv("PORT", "58731"))
     uvicorn.run(app, host="0.0.0.0", port=port)
