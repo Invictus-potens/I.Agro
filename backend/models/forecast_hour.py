@@ -16,4 +16,6 @@ class ForecastHour(SQLModel, table=True):
     precip_mm: float
     humidity: int
     uv: float
+    feelslike_c: float
+    icon_url: str
     forecast_day: Optional["ForecastDay"] = Relationship(back_populates="hours")
