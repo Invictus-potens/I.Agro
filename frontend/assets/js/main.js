@@ -26,6 +26,7 @@ function normalizeApiUrl(url) {
 let currentChatId = null;
 let currentMessages = [];
 let activeTab = 'chat'; // 'chat' | 'monitor'
+let currentLocationId = null;
 
 // ============================================
 // ELEMENTOS DO DOM
@@ -68,7 +69,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
     createNewChat();
     loadChatHistory();
+    loadDefaultLocation();
 });
+
+async function loadDefaultLocation() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/locations`);
+        if (!response.ok) return;
+        const locations = await response.json();
+        if (locations && locations.length > 0) {
+            currentLocationId = locations[0].id;
+        }
+    } catch {
+        // sem localização disponível — chat funciona sem contexto climático
+    }
+}
 
 async function initializeApiUrl() {
     const savedApiUrl = localStorage.getItem('agroApiUrl');
@@ -316,7 +331,8 @@ async function handleSendMessage() {
             body: JSON.stringify({
                 message: messageText,
                 chatId: currentChatId,
-                history: currentMessages.slice(-10)
+                history: currentMessages.slice(-10),
+                locationId: currentLocationId
             })
         });
 
