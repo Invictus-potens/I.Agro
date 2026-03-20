@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Relatório Técnico — IAgro - Assistente IA para Agricultura</title>
+  <title>Relatório Técnico — I.Agro - Assistente IA para Agricultura</title>
   <script>
     (function () {
       function initMermaid() {
@@ -124,7 +124,7 @@
     .meta-table td {
       padding: 0.75rem 1rem;
       border-bottom: 1px solid var(--gray-border);
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       vertical-align: top;
     }
     .meta-table tr:last-child td { border-bottom: none; }
@@ -214,7 +214,7 @@
       background: var(--green-dark);
       color: #fff;
       font-weight: 600;
-      padding: 0.65rem 0.9rem;
+      padding: 0.65rem 0.95rem;
       text-align: left;
       font-size: 0.8rem;
       text-transform: uppercase;
@@ -222,7 +222,7 @@
     }
     .data-table tbody tr:nth-child(even) td { background: var(--green-pale); }
     .data-table tbody td {
-      padding: 0.6rem 0.9rem;
+      padding: 0.6rem 0.95rem;
       border-bottom: 1px solid var(--gray-border);
       color: var(--gray-text);
       vertical-align: middle;
@@ -235,6 +235,24 @@
       width: 28%;
     }
     .data-table .placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    /* ── INTERFACE IMAGES ── */
+    .interface-image {
+      width: 100%;
+      border: 1px solid var(--gray-border);
+      border-radius: 4px;
+      background: var(--green-pale);
+      display: block;
+    }
+    .interface-caption {
+      font-size: 0.9rem;
+      color: var(--gray-text);
+      margin: 0.6rem 0 1.2rem;
+    }
+    .placeholder-text {
       color: #aaa;
       font-style: italic;
     }
@@ -293,7 +311,7 @@
     }
     .team-name {
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--green-dark);
       margin-bottom: 0.25rem;
     }
@@ -347,8 +365,8 @@
        HEADER
   ══════════════════════════════════════ -->
   <div class="header">
-    <p class="header-eyebrow">Relatório Técnico · Prática Extensionista</p>
-    <h1>IAgro - Assistente <em>IA</em><br>para Agricultura</h1>
+    <p class="header-eyebrow">Relatório Técnico · Industria 4.0</p>
+    <h1>I.Agro - Assistente <em>IA</em><br>para Agricultura</h1>
     <p class="header-subtitle">Engenharia de Software, Ano 3 — Unaerp, Ribeirão Preto</p>
     <hr class="header-divider" />
 
@@ -365,7 +383,7 @@
         </tr>
         <tr>
           <td class="meta-label">Natureza</td>
-          <td class="meta-value">Projeto de Prática Extensionista</td>
+          <td class="meta-value">Projeto de Industria 4.0</td>
         </tr>
         <tr>
           <td class="meta-label">Cidade</td>
@@ -373,11 +391,11 @@
         </tr>
         <tr>
           <td class="meta-label">Equipe</td>
-          <td class="meta-value">Alexandre Rodrigues - 843950 · Bruno Henrique - 843515 · Ettore Saburi - 843750 · Felipe Ortiz - 843689 · Marcos Kaminski</td>
+          <td class="meta-value">Alexandre Rodrigues - 843950 · Bruno Henrique - 843515 · Ettore Saburi - 843750 · Felipe Ortiz - 843689 · Marcos Kaminski - 843744</td>
         </tr>
         <tr>
           <td class="meta-label">Data</td>
-          <td class="meta-value" style="color:#aaa;font-style:italic;">[A preencher]</td>
+          <td class="meta-value">03/19/2026</td>
         </tr>
         <tr>
           <td class="meta-label">Versão</td>
@@ -403,6 +421,7 @@
           <li><span class="toc-num">04</span><a href="#stack">Arquitetura e Stack Tecnológica</a></li>
           <li><span class="toc-num">05</span><a href="#equipe">Equipe</a></li>
           <li><span class="toc-num">06</span><a href="#todo">Próximos Passos / TODO</a></li>
+          <li><span class="toc-num">07</span><a href="#interface">Interface do projeto</a></li>
         </ul>
       </div>
     </div>
@@ -425,10 +444,13 @@
         </p>
 
         <h3 class="sub-title">1.1 Motivação</h3>
-        <p style="font-size:0.9rem;color:#aaa;color:var(--gray-text);">Facilitar a prevenção de perdas agrícolas por decisões climáticas inadequadas.</p>
+        <p style="font-size:0.95rem;color:#aaa;color:var(--gray-text);">O aumento populacional e mudanças climaticas exigem que a agricultura se torne mais eficiente, fazendeiros sempre buscam soluções que possam aumentar a qualidade de plantio e retorno de investimentos.
+          acreditamos que o uso de inteligência artificial como ferramenta pode ser um diferencial de mercado para pequenos e médios agricultores, fornecendo insights valiosos e suporte em tempo real para otimizar suas operações agrícolas.
+          Com baixa janela de entrada e foco em usabilidade, o I.Agro visa democratizar o acesso a tecnologias avançadas, tornando-as acessíveis e úteis para aqueles que mais precisam. 
+        </p>
 
         <h3 class="sub-title">1.2 Público-Alvo</h3>
-        <p style="font-size:0.9rem;color:#aaa;color:var(--gray-text);">Pequenos e médios agricultores, cooperativas, etc.</p>
+        <p style="font-size:0.95rem;color:#aaa;color:var(--gray-text);">Pequenos e médios agricultores, cooperativas, hobbystas e etc.</p>
       </div>
     </div>
   </div>
@@ -550,7 +572,7 @@
         <h2 class="section-title">Arquitetura e Stack Tecnológica</h2>
 
         <h3 class="sub-title">4.1 Visão Geral da Arquitetura</h3>
-        <p style="font-size:0.9rem;color:#aaa;font-style:italic;">[A preencher — diagrama ou descrição da arquitetura do sistema]</p>
+        <p style="font-size:0.95rem;color:#aaa;color:var(--gray-text);">O core do projeto é a população do banco com dados climaticos, a partir dai conseguimos gerar as visualizações e gerar insights com a IA.</p>
         <section>
             <div class="row" id="arquitetura-diagrama">
                 <div class="twelve columns">
@@ -581,8 +603,139 @@
                 </div>
                 </div>
         </section>
-        
-        <h3 class="sub-title">4.2 Tecnologias Utilizadas</h3>
+      
+        <h3 class="sub-title">4.2 Modelo do banco de dados</h3>
+<p style="font-size:0.95rem;color:var(--gray-text);">O banco de dados PostgreSQL é dividido em grupos funcionais: dados climáticos brutos, previsão detalhada, localização geográfica e histórico de conversas com a IA.</p>
+
+<!-- Grupo: Localização -->
+<h4 style="font-size:0.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-text);margin:2rem 0 0.75rem;">Localização</h4>
+<div class="row">
+  <div class="six columns">
+    <p style="font-size:0.75rem;color:var(--gray-text);margin-bottom:0.4rem;font-weight:600;">locations</p>
+    <table class="data-table u-full-width">
+      <thead><tr><th>Coluna</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td class="td-label">id</td><td>integer · PK</td></tr>
+        <tr><td class="td-label">name</td><td>varchar</td></tr>
+        <tr><td class="td-label">lat</td><td>numeric</td></tr>
+        <tr><td class="td-label">lon</td><td>numeric</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="six columns">
+    <p style="font-size:0.75rem;color:var(--gray-text);margin-bottom:0.4rem;font-weight:600;">weather_data</p>
+    <table class="data-table u-full-width">
+      <thead><tr><th>Coluna</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td class="td-label">id</td><td>integer · PK</td></tr>
+        <tr><td class="td-label">city_name</td><td>varchar</td></tr>
+        <tr><td class="td-label">region</td><td>varchar</td></tr>
+        <tr><td class="td-label">country</td><td>varchar</td></tr>
+        <tr><td class="td-label">lat</td><td>numeric</td></tr>
+        <tr><td class="td-label">lon</td><td>numeric</td></tr>
+        <tr><td class="td-label">geom</td><td>geometry</td></tr>
+        <tr><td class="td-label">temp_c</td><td>numeric</td></tr>
+        <tr><td class="td-label">humidity</td><td>integer</td></tr>
+        <tr><td class="td-label">condition_text</td><td>varchar</td></tr>
+        <tr><td class="td-label">wind_kph</td><td>numeric</td></tr>
+        <tr><td class="td-label">captured_at</td><td>timestamp</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Grupo: Clima atual e previsão -->
+<h4 style="font-size:0.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-text);margin:2rem 0 0.75rem;">Clima Atual e Previsão</h4>
+<div class="row">
+  <div class="four columns">
+    <p style="font-size:0.75rem;color:var(--gray-text);margin-bottom:0.4rem;font-weight:600;">current_weather</p>
+    <table class="data-table u-full-width">
+      <thead><tr><th>Coluna</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td class="td-label">id</td><td>integer · PK</td></tr>
+        <tr><td class="td-label">location_id</td><td>integer · FK</td></tr>
+        <tr><td class="td-label">temp_c</td><td>numeric</td></tr>
+        <tr><td class="td-label">humidity</td><td>integer</td></tr>
+        <tr><td class="td-label">precip_mm</td><td>numeric</td></tr>
+        <tr><td class="td-label">wind_kph</td><td>numeric</td></tr>
+        <tr><td class="td-label">condition_text</td><td>varchar</td></tr>
+        <tr><td class="td-label">uv</td><td>integer</td></tr>
+        <tr><td class="td-label">data_hora</td><td>timestamp</td></tr>
+        <tr><td class="td-label">cidade</td><td>varchar</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="four columns">
+    <p style="font-size:0.75rem;color:var(--gray-text);margin-bottom:0.4rem;font-weight:600;">forecast_days</p>
+    <table class="data-table u-full-width">
+      <thead><tr><th>Coluna</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td class="td-label">id</td><td>integer · PK</td></tr>
+        <tr><td class="td-label">location_id</td><td>integer · FK</td></tr>
+        <tr><td class="td-label">date</td><td>varchar</td></tr>
+        <tr><td class="td-label">maxtemp_c</td><td>numeric</td></tr>
+        <tr><td class="td-label">mintemp_c</td><td>numeric</td></tr>
+        <tr><td class="td-label">avgtemp_c</td><td>numeric</td></tr>
+        <tr><td class="td-label">totalprecip_mm</td><td>numeric</td></tr>
+        <tr><td class="td-label">avghumidity</td><td>numeric</td></tr>
+        <tr><td class="td-label">daily_chance_of_rain</td><td>integer</td></tr>
+        <tr><td class="td-label">condition_text</td><td>varchar</td></tr>
+        <tr><td class="td-label">uv</td><td>integer</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="four columns">
+    <p style="font-size:0.75rem;color:var(--gray-text);margin-bottom:0.4rem;font-weight:600;">forecast_hours</p>
+    <table class="data-table u-full-width">
+      <thead><tr><th>Coluna</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td class="td-label">id</td><td>integer · PK</td></tr>
+        <tr><td class="td-label">forecast_day_id</td><td>integer · FK</td></tr>
+        <tr><td class="td-label">time</td><td>varchar</td></tr>
+        <tr><td class="td-label">temp_c</td><td>numeric</td></tr>
+        <tr><td class="td-label">condition_text</td><td>varchar</td></tr>
+        <tr><td class="td-label">chance_of_rain</td><td>integer</td></tr>
+        <tr><td class="td-label">precip_mm</td><td>numeric</td></tr>
+        <tr><td class="td-label">humidity</td><td>integer</td></tr>
+        <tr><td class="td-label">uv</td><td>integer</td></tr>
+        <tr><td class="td-label">feelslike_c</td><td>numeric</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Grupo: IA / Chatbot -->
+<h4 style="font-size:0.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-text);margin:2rem 0 0.75rem;">IA / Chatbot</h4>
+<div class="row">
+  <div class="five columns">
+    <p style="font-size:0.75rem;color:var(--gray-text);margin-bottom:0.4rem;font-weight:600;">chats</p>
+    <table class="data-table u-full-width">
+      <thead><tr><th>Coluna</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td class="td-label">id</td><td>integer · PK</td></tr>
+        <tr><td class="td-label">title</td><td>varchar</td></tr>
+        <tr><td class="td-label">location_id</td><td>integer · FK</td></tr>
+        <tr><td class="td-label">created_at</td><td>timestamp</td></tr>
+        <tr><td class="td-label">updated_at</td><td>timestamp</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="five columns">
+    <p style="font-size:0.75rem;color:var(--gray-text);margin-bottom:0.4rem;font-weight:600;">chat_messages</p>
+    <table class="data-table u-full-width">
+      <thead><tr><th>Coluna</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td class="td-label">id</td><td>integer · PK</td></tr>
+        <tr><td class="td-label">chat_id</td><td>integer · FK</td></tr>
+        <tr><td class="td-label">role</td><td>varchar</td></tr>
+        <tr><td class="td-label">content</td><td>varchar</td></tr>
+        <tr><td class="td-label">created_at</td><td>timestamp</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+        <h3 class="sub-title">4.3 Tecnologias Utilizadas</h3>
         <table class="data-table u-full-width">
           <thead>
             <tr>
@@ -657,7 +810,7 @@
             <div class="team-contact">https://github.com/Invictus-potens</div>
           </div>
           <div class="team-card">
-            <div class="team-name">Marcos Kaminski</div>
+            <div class="team-name">Marcos Kaminski - 843744</div>
             <div class="team-role">Desenvolvedor de IA</div>
             <div class="team-contact">https://github.com/MKaminskii</div>
           </div>
@@ -731,12 +884,48 @@
     </div>
   </div>
 
+    <!-- ══════════════════════════════════════
+       7. INTERFACE DO PROJETO
+  ══════════════════════════════════════ -->
 
+  <div class="row" id="interface">
+    <div class="twelve columns">
+      <div class="section-block">
+        <span class="section-number">— seção 07</span>
+        <h2 class="section-title">Interface do Projeto</h2>
+
+        <div class="row">
+          <div class="twelve columns">
+            <h3 class="sub-title">7.1 Chat IA</h3>
+            <img class="interface-image" src="frontend/assets/img/chat.png" alt="Interface do chat IA" />
+            <p class="interface-caption" style="font-size:0.95rem;color:var(--gray-text);">
+              Aqui é onde podemos interagir com a IA, cada botão em cima da caixa de dialogo inicia uma função que executa 
+              querys personalizadas no banco de dados, a IA processa os dados e retorna uma resposta em linguagem natural, o usuário pode fazer perguntas como "Qual a previsão do tempo para os próximos 3 dias?" ou "Qual a umidade atual na minha região?" e receber respostas detalhadas com base nos dados coletados.
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="twelve columns">
+            <h3 class="sub-title">7.2 Monitoramento</h3>
+            <img class="interface-image" src="frontend/assets/img/monitoramento.png" alt="Dashboard de monitoramento" />
+            <p class="interface-caption" style="font-size:0.95rem;color:var(--gray-text);">
+              Aqui é onde podemos visualizar os dados do sistema em tempo real, com gráficos e métricas principais que permitem acompanhar tendências climaticas das regiões fazem parte da busca.
+              Acompanhamento do clima em tempo real, previsão de até 3 dias futuros, nivel de raios UV, humidade e tentencia de chuva são algumas das informações disponíveis no dashboard, o monitoramento é atualizado automaticamente a cada nova coleta de dados realizada pelo n8n, garantindo que os usuários tenham acesso às informações mais recentes para tomar decisões informadas sobre suas atividades agrícolas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
   <!-- ══════════════════════════════════════
        FOOTER
   ══════════════════════════════════════ -->
   <footer>
-    <span>PROJETO EXTENSIONISTA · ENGENHARIA DE SOFTWARE · UNAERP · RIBEIRÃO PRETO, SP</span>
+    <span>INDUSTRIA 4.0 · ENGENHARIA DE SOFTWARE · UNAERP · RIBEIRÃO PRETO, SP</span>
     <br />
     <span style="font-size:0.7rem;opacity:0.5;letter-spacing:0.05em;">Versão 1.0</span>
   </footer>
