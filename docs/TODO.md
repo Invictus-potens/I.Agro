@@ -3,7 +3,7 @@
 ## Status do Projeto
 - [x] Projeto Iniciado
 - [x] Em Desenvolvimento
-- [ ] Fase de Testes
+- [x] Fase de Testes
 - [ ] Concluído
 
 ---
@@ -11,7 +11,7 @@
 ## Modelagem de Dados
 - [x] Pesquisar e selecionar API de clima
 - [x] Estudar estrutura de dados retornados pela API
-- [ ] Desenhar diagrama ER do banco de dados
+- [x] Desenhar diagrama ER do banco de dados
 - [x] Definir schema das tabelas principais
 - [x] Definir tipos de dados e constraints
 - [ ] Revisar e validar modelagem com a equipe
@@ -26,44 +26,44 @@
 - [x] Configurar scheduling (cron jobs)
 - [x] Implementar conexão com PostgreSQL
 - [x] Testar inserção automática de dados
-- [ ] Configurar tratamento de erros e logs
+- [x] Configurar tratamento de erros e logs
 
 ---
 
 ## API Backend
-- [ ] Configurar ambiente Python
-- [ ] Instalar dependências (Flask/FastAPI, SQLAlchemy, etc.)
-- [ ] Criar estrutura de pastas do projeto
-- [ ] Implementar conexão com banco de dados
-- [ ] Desenvolver endpoints CRUD:
-  - [ ] CREATE - Adicionar dados
-  - [ ] READ - Consultar dados
-  - [ ] UPDATE - Atualizar dados
-  - [ ] DELETE - Remover dados
+- [x] Configurar ambiente Python
+- [x] Instalar dependências (Flask/FastAPI, SQLAlchemy, etc.)
+- [x] Criar estrutura de pastas do projeto
+- [x] Implementar conexão com banco de dados
+- [x] Desenvolver endpoints CRUD:
+  - [x] CREATE - Adicionar dados
+  - [x] READ - Consultar dados
+  - [x] UPDATE - Atualizar dados
+  - [x] DELETE - Remover dados
 - [ ] Criar endpoints específicos para IA:
   - [ ] Endpoint de análise climática
   - [ ] Endpoint de recomendações
   - [ ] Endpoint de histórico
-- [ ] Implementar validação de dados
-- [ ] Adicionar documentação da API (Swagger/OpenAPI)
-- [ ] Testes unitários
-- [ ] Testes de integração
+- [x] Implementar validação de dados
+- [x] Adicionar documentação da API (Swagger/OpenAPI)
+- [x] Testes unitários
+- [x] Testes de integração
 
 ---
 
 ## Dashboard de Monitoramento
 - [x] Instalar e configurar Grafana
 - [x] Conectar Grafana ao PostgreSQL
-- [ ] Criar dashboard principal
-- [ ] Implementar visualizações:
-  - [ ] Gráficos de séries temporais (temperatura, umidade, etc.)
-  - [ ] Indicadores principais (KPIs)
-  - [ ] Heatmaps de monitoramento regional
-  - [ ] Gráficos de precipitação
-  - [ ] Alertas de condições críticas
-- [ ] Configurar refresh automático
-- [ ] Personalizar tema e layout
-- [ ] Adicionar filtros e variáveis
+- [x] Criar dashboard principal
+- [] Implementar visualizações:
+  - [x] Gráficos de séries temporais (temperatura, umidade, etc.)
+  - [x] Indicadores principais (KPIs)
+  - [x] Heatmaps de monitoramento regional
+  - [x] Gráficos de precipitação
+  - [x] Alertas de condições críticas
+- [x] Configurar refresh automático
+- [x] Personalizar tema e layout
+- [x] Adicionar filtros e variáveis
 - [ ] Testar responsividade
 
 ---
@@ -71,25 +71,25 @@
 ## Interface do Usuário
 ### Frontend
 - [x] Criar estrutura HTML base
-- [ ] Desenvolver layout responsivo
-- [ ] Estilizar com CSS
-- [ ] Integrar dashboard do Grafana
+- [x] Desenvolver layout responsivo
+- [x] Estilizar com CSS
+- [x] Integrar dashboard do Grafana
 
 ### Chatbot IA
-- [ ] Escolher plataforma/framework de chatbot
-- [ ] Configurar modelo de IA
-- [ ] Implementar integração com backend
-- [ ] Desenvolver fluxo de conversação
+- [x] Escolher plataforma/framework de chatbot
+- [x] Configurar modelo de IA
+- [x] Implementar integração com backend
+- [x] Desenvolver fluxo de conversação
 - [ ] Adicionar funcionalidades:
   - [ ] Consulta de dados meteorológicos
   - [ ] Recomendações de irrigação
   - [ ] Sugestões de controle de pragas
   - [ ] Orientações sobre manejo da plantação
-- [ ] Implementar interface de chat no site
-- [ ] Testes de usabilidade
+- [x] Implementar interface de chat no site
+- [x] Testes de usabilidade
 
 ### Integração Final
-- [ ] Conectar todas as partes do sistema
+- [x] Conectar todas as partes do sistema
 - [ ] Realizar testes end-to-end
 - [ ] Ajustar performance
 - [ ] Corrigir bugs encontrados
@@ -97,8 +97,8 @@
 ---
 
 ## Testes e Qualidade
-- [ ] Testes de unidade
-- [ ] Testes de integração
+- [x] Testes de unidade
+- [x] Testes de integração
 - [ ] Testes de aceitação do usuário
 - [ ] Revisão de código
 - [ ] Documentação técnica completa
@@ -110,15 +110,15 @@
 - [x] TODO.md 
 - [ ] Documentação da API
 - [ ] Manual do usuário
-- [ ] Guia de instalação
+- [x] Guia de instalação
 - [ ] Documentação do código
 
 ---
 
 ## Deploy e Entrega
-- [ ] Configurar ambiente de produção
-- [ ] Realizar deploy do backend
-- [ ] Realizar deploy do frontend
+- [x] Configurar ambiente de produção
+- [x] Realizar deploy do backend
+- [x] Realizar deploy do frontend
 - [ ] Configurar monitoramento em produção
 - [ ] Apresentação do projeto
 - [ ] Entrega final
@@ -132,8 +132,4 @@
 - Felipe Ortiz
 - Marcos Kaminski
 
----
-
-## 📅 Observações e Notas
-_Use este espaço para adicionar observações importantes, deadlines ou decisões tomadas durante o desenvolvimento._
-
+--- 
