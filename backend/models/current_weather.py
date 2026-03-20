@@ -1,5 +1,6 @@
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
+from datetime import datetime
 
 if TYPE_CHECKING:
     from .location import Location
@@ -15,4 +16,6 @@ class CurrentWeather(SQLModel, table=True):
     wind_kph: float
     condition_text: str
     uv: float
+    data_hora: datetime
+    cidade: str
     location: Optional["Location"] = Relationship(back_populates="current_weather")
