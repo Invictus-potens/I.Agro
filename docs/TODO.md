@@ -4,6 +4,7 @@
 - [x] Projeto Iniciado
 - [x] Em Desenvolvimento
 - [x] Fase de Testes
+- [x] Concluído primeiro stage - entregar a documentação
 - [ ] Concluído
 
 ---
@@ -14,7 +15,7 @@
 - [x] Desenhar diagrama ER do banco de dados
 - [x] Definir schema das tabelas principais
 - [x] Definir tipos de dados e constraints
-- [ ] Revisar e validar modelagem com a equipe
+- [X] Revisar e validar modelagem com a equipe
 
 ---
 
@@ -40,10 +41,10 @@
   - [x] READ - Consultar dados
   - [x] UPDATE - Atualizar dados
   - [x] DELETE - Remover dados
-- [ ] Criar endpoints específicos para IA:
-  - [ ] Endpoint de análise climática
-  - [ ] Endpoint de recomendações
-  - [ ] Endpoint de histórico
+- [X] Criar endpoints específicos para IA:
+  - [X] Endpoint de análise climática
+  - [X] Endpoint de recomendações
+  - [X] Endpoint de histórico
 - [x] Implementar validação de dados
 - [x] Adicionar documentação da API (Swagger/OpenAPI)
 - [x] Testes unitários
@@ -81,8 +82,8 @@
 - [x] Implementar integração com backend
 - [x] Desenvolver fluxo de conversação
 - [ ] Adicionar funcionalidades:
-  - [ ] Consulta de dados meteorológicos
-  - [ ] Recomendações de irrigação
+  - [X] Consulta de dados meteorológicos
+  - [X] Recomendações de irrigação
   - [ ] Sugestões de controle de pragas
   - [ ] Orientações sobre manejo da plantação
 - [x] Implementar interface de chat no site
@@ -90,8 +91,8 @@
 
 ### Integração Final
 - [x] Conectar todas as partes do sistema
-- [ ] Realizar testes end-to-end
-- [ ] Ajustar performance
+- [X] Realizar testes end-to-end
+- [X] Ajustar performance
 - [ ] Corrigir bugs encontrados
 
 ---
@@ -99,17 +100,17 @@
 ## Testes e Qualidade
 - [x] Testes de unidade
 - [x] Testes de integração
-- [ ] Testes de aceitação do usuário
-- [ ] Revisão de código
-- [ ] Documentação técnica completa
+- [X] Testes de aceitação do usuário
+- [X] Revisão de código
+- [X] Documentação técnica completa
 
 ---
 
 ## Documentação
 - [x] README.md 
 - [x] TODO.md 
-- [ ] Documentação da API
-- [ ] Manual do usuário
+- [X] Documentação da API
+- [X] Manual do usuário
 - [x] Guia de instalação
 - [ ] Documentação do código
 
@@ -119,7 +120,7 @@
 - [x] Configurar ambiente de produção
 - [x] Realizar deploy do backend
 - [x] Realizar deploy do frontend
-- [ ] Configurar monitoramento em produção
+- [X] Configurar monitoramento em produção
 - [ ] Apresentação do projeto
 - [ ] Entrega final
 
