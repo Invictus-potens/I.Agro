@@ -1,0 +1,22 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: 170.254.78.193
+          port: 4851
+          username: invictus
+          key: ${{ secrets.DEPLOY_ACTIONS }}
+          script: |
+            cd ~/desenvolvimento/faculdade/farmer-s_companion
+            git pull origin main
+            docker compose up -d --build
