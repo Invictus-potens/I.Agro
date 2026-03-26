@@ -26,10 +26,9 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: https://discord.com/api/webhooks/1486735502097776685/fNdSBU-GmPCY2wRLqGcprPRyir5HvNih0HxfSJffGjF-dDbJWT08M_KTVOMoHSpMdWri
         run: |
-          MESSAGE="✅ Deploy realizado com sucesso\nO deploy do ${{ github.event.repository.name }} foi concluído com sucesso.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"embeds\": \"${MESSAGE//$'\n'/\\n}\"}" \
+            -d "{\"embeds\":[{\"title\":\"✅ Deploy realizado com sucesso\",\"description\":\"O deploy do ${{ github.event.repository.name }} foi concluído com sucesso.\",\"color\":5763719,\"fields\":[{\"name\":\"Branch\",\"value\":\"${{ github.ref_name }}\",\"inline\":true},{\"name\":\"Commit\",\"value\":\"${{ github.sha }}\",\"inline\":false},{\"name\":\"Autor\",\"value\":\"${{ github.actor }}\",\"inline\":true}]}]}" \
             "$DISCORD_WEBHOOK_URL"
 
       - name: Notify Discord - Failure
@@ -37,8 +36,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: https://discord.com/api/webhooks/1486735502097776685/fNdSBU-GmPCY2wRLqGcprPRyir5HvNih0HxfSJffGjF-dDbJWT08M_KTVOMoHSpMdWri
         run: |
-          MESSAGE="❌ Falha no deploy\nO deploy do ${{ github.event.repository.name }} falhou.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"embeds\": \"${MESSAGE//$'\n'/\\n}\"}" \
+            -d "{\"embeds\":[{\"title\":\"❌ Falha no deploy\",\"description\":\"O deploy do ${{ github.event.repository.name }} falhou.\",\"color\":15548997,\"fields\":[{\"name\":\"Branch\",\"value\":\"${{ github.ref_name }}\",\"inline\":true},{\"name\":\"Commit\",\"value\":\"${{ github.sha }}\",\"inline\":false},{\"name\":\"Autor\",\"value\":\"${{ github.actor }}\",\"inline\":true}]}]}" \
             "$DISCORD_WEBHOOK_URL"
