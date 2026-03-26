@@ -8,6 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
@@ -23,8 +25,6 @@ jobs:
 
       - name: Notify Discord - Success
         if: success()
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           curl -H "Content-Type: application/json" \
             -X POST \
@@ -33,8 +33,6 @@ jobs:
 
       - name: Notify Discord - Failure
         if: failure()
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           curl -H "Content-Type: application/json" \
             -X POST \
