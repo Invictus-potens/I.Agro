@@ -20,3 +20,25 @@ jobs:
             cd ~/desenvolvimento/faculdade/farmer-s_companion
             git pull origin main
             docker compose up -d --build
+
+      - name: Notify Discord - Success
+        if: success()
+        env:
+          DISCORD_WEBHOOK_URL: https://discord.com/api/webhooks/1486735502097776685/fNdSBU-GmPCY2wRLqGcprPRyir5HvNih0HxfSJffGjF-dDbJWT08M_KTVOMoHSpMdWri
+        run: |
+          MESSAGE="✅ Deploy realizado com sucesso\nO deploy do FinancePro foi concluído com sucesso.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"${MESSAGE//$'\n'/\\n}\"}" \
+            "$DISCORD_WEBHOOK_URL"
+
+      - name: Notify Discord - Failure
+        if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: https://discord.com/api/webhooks/1486735502097776685/fNdSBU-GmPCY2wRLqGcprPRyir5HvNih0HxfSJffGjF-dDbJWT08M_KTVOMoHSpMdWri
+        run: |
+          MESSAGE="❌ Falha no deploy\nO deploy do FinancePro falhou.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"${MESSAGE//$'\n'/\\n}\"}" \
+            "$DISCORD_WEBHOOK_URL"
