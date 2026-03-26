@@ -1,27 +1,12 @@
 """
-Lógica do chat: acesso ao banco de dados, Gemini e handler.
+Lógica do chat: acesso ao banco de dados, webhook n8n e handler.
 """
 import os
 from typing import Any
 
-import google.generativeai as genai
+import httpx
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-SYSTEM_INSTRUCTION = """
-**Identidade e Papel:**
-Você é o I.Agro, um assistente virtual especialista em agronomia. Seu único objetivo é orientar produtores rurais sobre o clima e a tomarem as melhores decisões sobre plantio, colheita, irrigação, pragas e impactos climáticos.
-
-**Regras:**
-É TERMINANTEMENTE PROIBIDO falar sobre qualquer assunto fora do universo agrícola. Se o usuário perguntar sobre política, esportes, receitas ou qualquer outro tema, você deve responder educadamente que é um assistente exclusivo para o agronegócio e redirecionar a conversa para a lavoura ou o clima.
-
-**Diretrizes de Resposta:**
-- **Limite Máximo:** Sua resposta inteira DEVE conter NO MÁXIMO 2 parágrafos curtos. Sem exceções.
-- **Estrutura Obrigatória:** 
-    1. O **primeiro parágrafo** deve responder à pergunta do usuário de forma direta, resumindo os dados climáticos injetados no sistema (sem listar números excessivos, apenas o cenário geral).
-    2. O **segundo parágrafo** DEVE conter os **insights práticos**. Traduza o clima em ações diretas para o fazendeiro (ex: "Aproveite a janela sem chuva hoje para aplicar defensivos" ou "Suspenda a irrigação amanhã devido à alta umidade prevista").
-- **Fidelidade:** Nunca invente dados climáticos. Use estritamente as informações fornecidas no contexto da mensagem. Se não houver dados suficientes, peça a localização ou a cultura plantada.
-"""
+WEBHOOK_URL = "https://n8n.pradortiz.lat/webhook/319e00f2-eeb7-42fc-bd95-7d3b90d97cdc"
 
 
 def get_location_with_weather(location_id: int) -> dict[str, Any] | None:
@@ -78,37 +63,33 @@ def build_weather_context(data: dict[str, Any]) -> str:
     return " ".join(parts) if parts else "Sem dados de clima disponíveis."
 
 
-def call_gemini(message: str, history: list | None = None, contexto_clima: str | None = None) -> str:
-    """Chama o Gemini com message, contexto de clima opcional."""
-    if not GEMINI_API_KEY:
-        return "Erro: GEMINI_API_KEY não configurada. Configure a chave no servidor."
-
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel(
-        "gemini-2.5-flash",
-        system_instruction=SYSTEM_INSTRUCTION,
-    )
-
-    content_parts = []
-    if contexto_clima:
-        content_parts.append(f"Dados atuais da região:\n{contexto_clima}\n\n")
-    if history:
-        for h in history[-10:]:
-            role = h.get("role") or h.get("sender")
-            text = h.get("content") or h.get("parts", [{}])[0].get("text", "")
-            if not text:
-                continue
-            if role == "user":
-                content_parts.append(f"Usuário: {text}\n")
-            else:
-                content_parts.append(f"Assistente: {text}\n")
-    content_parts.append(f"Usuário: {message}")
-
-    prompt = "\n".join(content_parts)
-    response = model.generate_content(prompt)
-    if not response or not response.text:
-        return "Não foi possível obter resposta da IA."
-    return response.text.strip()
+def call_webhook(message: str, history: list | None = None, contexto_clima: str | None = None) -> str:
+    """Envia a mensagem para o webhook n8n e retorna a resposta."""
+    payload = {
+        "message": message,
+        "history": history or [],
+        "contexto_clima": contexto_clima or "",
+    }
+    try:
+        with httpx.Client(timeout=120.0) as client:
+            response = client.post(WEBHOOK_URL, json=payload)
+            response.raise_for_status()
+            data = response.json()
+            # Aceita diferentes formatos de resposta do n8n
+            reply = (
+                data.get("reply")
+                or data.get("message")
+                or data.get("output")
+                or data.get("text")
+                or (data[0].get("reply") or data[0].get("message") or data[0].get("output") or data[0].get("text") if isinstance(data, list) and data else None)
+            )
+            if not reply:
+                return "Não foi possível obter resposta da IA."
+            return str(reply).strip()
+    except httpx.TimeoutException:
+        return "A IA demorou muito para responder. Tente novamente."
+    except Exception as e:
+        return f"Erro ao contatar o assistente: {str(e)}"
 
 
 def handle_chat(
@@ -133,4 +114,4 @@ def handle_chat(
         else:
             contexto_clima = "Dados da região temporariamente indisponíveis."
 
-    return call_gemini(msg, history=history or [], contexto_clima=contexto_clima)
+    return call_webhook(msg, history=history or [], contexto_clima=contexto_clima)
