@@ -29,7 +29,7 @@ jobs:
           MESSAGE="✅ Deploy realizado com sucesso\nO deploy do ${{ github.event.repository.name }} foi concluído com sucesso.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"content\": \"${MESSAGE//$'\n'/\\n}\"}" \
+            -d "{\"embeds\": \"${MESSAGE//$'\n'/\\n}\"}" \
             "$DISCORD_WEBHOOK_URL"
 
       - name: Notify Discord - Failure
@@ -40,5 +40,5 @@ jobs:
           MESSAGE="❌ Falha no deploy\nO deploy do ${{ github.event.repository.name }} falhou.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"content\": \"${MESSAGE//$'\n'/\\n}\"}" \
+            -d "{\"embeds\": \"${MESSAGE//$'\n'/\\n}\"}" \
             "$DISCORD_WEBHOOK_URL"
