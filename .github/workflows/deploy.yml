@@ -26,7 +26,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          MESSAGE="✅ Deploy realizado com sucesso\nO deploy do FinancePro foi concluído com sucesso.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
+          MESSAGE="✅ Deploy realizado com sucesso\nO deploy do ${{ github.event.repository.name }} foi concluído com sucesso.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
           curl -H "Content-Type: application/json" \
             -X POST \
             -d "{\"content\": \"${MESSAGE//$'\n'/\\n}\"}" \
@@ -37,7 +37,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          MESSAGE="❌ Falha no deploy\nO deploy do FinancePro falhou.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
+          MESSAGE="❌ Falha no deploy\nO deploy do ${{ github.event.repository.name }} falhou.\n\nBranch: ${{ github.ref_name }}\nCommit: ${{ github.sha }}\nAutor: ${{ github.actor }}"
           curl -H "Content-Type: application/json" \
             -X POST \
             -d "{\"content\": \"${MESSAGE//$'\n'/\\n}\"}" \
