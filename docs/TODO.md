@@ -65,6 +65,8 @@
 - [x] Configurar refresh automático
 - [x] Personalizar tema e layout
 - [x] Adicionar filtros e variáveis
+- [ ] Criar modelos de visualização que vão tomar o lugar do Grafana
+- [ ] Substituir os graficos do grafana pelos novos
 - [ ] Testar responsividade
 
 ---
@@ -121,7 +123,7 @@
 - [x] Realizar deploy do backend
 - [x] Realizar deploy do frontend
 - [X] Configurar monitoramento em produção
-- [ ] Apresentação do projeto
+- [x] Apresentação do projeto
 - [ ] Entrega final
 
 ---
