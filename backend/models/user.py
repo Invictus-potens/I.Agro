@@ -11,4 +11,5 @@ class User(SQLModel, table=True):
     username: str = Field(index=True, unique=True)
     email: str = Field(index=True, unique=True)
     full_name: Optional[str] = None
+    hashed_password: str
     farms: List["Farm"] = Relationship(back_populates="owner")

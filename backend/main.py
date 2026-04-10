@@ -21,9 +21,11 @@ from pydantic import BaseModel
 from sqlmodel import Session, select
 
 from backend.models import Location, CurrentWeather, ForecastDay, ForecastHour
+from backend.models.user import User
 from backend.models.chat import Chat, ChatMessage
 from backend.services.database import get_session
 from backend.chat import handle_chat
+from backend.auth import hash_password, verify_password, create_access_token
 
 app = FastAPI(title="Farmers Companion API", version="1.0.0")
 
@@ -137,6 +139,47 @@ class ChatBody(BaseModel):
     chatId: Optional[Union[int, str]] = None
     history: Optional[list] = None
     locationId: Optional[int] = None
+
+
+class RegisterBody(BaseModel):
+    username: str
+    email: str
+    password: str
+    full_name: Optional[str] = None
+
+
+class LoginBody(BaseModel):
+    username: str
+    password: str
+
+
+# ── Auth ──────────────────────────────────────────────────────────────────────
+@app.post("/api/auth/register", status_code=201)
+def register(body: RegisterBody, session: Session = Depends(get_session)):
+    if session.exec(select(User).where(User.username == body.username)).first():
+        raise HTTPException(status_code=400, detail="Username já está em uso.")
+    if session.exec(select(User).where(User.email == body.email)).first():
+        raise HTTPException(status_code=400, detail="Email já está em uso.")
+    user = User(
+        username=body.username,
+        email=body.email,
+        full_name=body.full_name,
+        hashed_password=hash_password(body.password),
+    )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    token = create_access_token({"sub": str(user.id), "username": user.username})
+    return {"access_token": token, "token_type": "bearer", "username": user.username}
+
+
+@app.post("/api/auth/login")
+def login(body: LoginBody, session: Session = Depends(get_session)):
+    user = session.exec(select(User).where(User.username == body.username)).first()
+    if not user or not verify_password(body.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Usuário ou senha incorretos.")
+    token = create_access_token({"sub": str(user.id), "username": user.username})
+    return {"access_token": token, "token_type": "bearer", "username": user.username}
 
 
 # ── Locations ─────────────────────────────────────────────────────────────────

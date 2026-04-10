@@ -6,6 +6,7 @@ import Topbar from '../components/Topbar';
 import ChatView from '../components/ChatView';
 import MonitorView from '../components/MonitorView';
 import ConfigModal from '../components/ConfigModal';
+import LoginView from '../components/LoginView';
 
 function getDefaultApiUrl() {
   if (process.env.NEXT_PUBLIC_API_URL) {
@@ -22,11 +23,16 @@ function normalizeApiUrl(url) {
   if (!raw) return getDefaultApiUrl();
 
   let normalized = raw.replace(/\/+$/, '');
+  if (!normalized) return getDefaultApiUrl();
 
-  if (typeof window !== 'undefined' &&
-      window.location.protocol === 'https:' &&
-      normalized.startsWith('http://')) {
-    normalized = normalized.replace(/^http:\/\//, 'https://');
+  if (typeof window !== 'undefined') {
+    // Se a URL salva aponta para a própria origem do frontend, usa o padrão
+    if (normalized === window.location.origin) return getDefaultApiUrl();
+
+    if (window.location.protocol === 'https:' &&
+        normalized.startsWith('http://')) {
+      normalized = normalized.replace(/^http:\/\//, 'https://');
+    }
   }
 
   return normalized;
@@ -41,6 +47,8 @@ export default function Home() {
   const [apiBaseUrl, setApiBaseUrl] = useState('');
   const [configModalOpen, setConfigModalOpen] = useState(false);
   const [chatTitle, setChatTitle] = useState('Novo Planejamento');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     const savedApiUrl = localStorage.getItem('agroApiUrl');
@@ -49,6 +57,9 @@ export default function Home() {
     } else {
       setApiBaseUrl(getDefaultApiUrl());
     }
+    const token = localStorage.getItem('agroToken');
+    setIsAuthenticated(!!token);
+    setAuthReady(true);
   }, []);
 
   useEffect(() => {
@@ -141,6 +152,22 @@ export default function Home() {
     setConfigModalOpen(false);
   }
 
+  function handleLogin(data) {
+    setIsAuthenticated(true);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('agroToken');
+    localStorage.removeItem('agroUsername');
+    setIsAuthenticated(false);
+  }
+
+  if (!authReady) return null;
+
+  if (!isAuthenticated) {
+    return <LoginView apiBaseUrl={apiBaseUrl || getDefaultApiUrl()} onLogin={handleLogin} />;
+  }
+
   return (
     <>
       <div className={`app-container${activeTab === 'monitor' ? ' monitor-mode' : ''}`}>
@@ -149,6 +176,7 @@ export default function Home() {
           activeTab={activeTab}
           onSwitchTab={setActiveTab}
           onOpenConfig={() => setConfigModalOpen(true)}
+          onLogout={handleLogout}
         />
         {activeTab === 'chat' && (
           <Sidebar

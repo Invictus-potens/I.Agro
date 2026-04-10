@@ -6,3 +6,5 @@ fastapi
 uvicorn
 httpx
 google-generativeai
+passlib[bcrypt]
+python-jose[cryptography]
