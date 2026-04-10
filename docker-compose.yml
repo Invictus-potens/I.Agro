@@ -14,7 +14,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+        NEXT_PUBLIC_API_URL: /api-proxy
+        BACKEND_URL: http://backend:8005
+    environment:
+      - BACKEND_URL=http://backend:8005
     ports:
       - "3500:8005"
     restart: unless-stopped
