@@ -1,20 +1,13 @@
 services:
-<<<<<<< HEAD
-  app:
-    build: .
-=======
   backend:
     build:
       context: .
       dockerfile: Dockerfile
->>>>>>> a6ba1731bce3faeb060101efc7c629262854bb34
     ports:
       - "8005:8005"
     env_file:
       - .env
     restart: unless-stopped
-<<<<<<< HEAD
-=======
 
   frontend:
     build:
@@ -27,4 +20,3 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
->>>>>>> a6ba1731bce3faeb060101efc7c629262854bb34
