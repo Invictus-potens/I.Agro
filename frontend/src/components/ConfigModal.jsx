@@ -38,7 +38,7 @@ export default function ConfigModal({ isOpen, grafanaUrl, apiBaseUrl, onSave, on
               type="text"
               value={grafanaInput}
               onChange={e => setGrafanaInput(e.target.value)}
-              placeholder="http://localhost:3000/d/..."
+              placeholder="http://localhost:8005/d/..."
               className="modal-input"
             />
             <p className="modal-hint">
