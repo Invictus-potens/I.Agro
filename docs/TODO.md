@@ -123,11 +123,7 @@
 - [x] Realizar deploy do backend
 - [x] Realizar deploy do frontend
 - [X] Configurar monitoramento em produção
-<<<<<<< HEAD
-- [ ] Apresentação do projeto
-=======
 - [x] Apresentação do projeto
->>>>>>> a6ba1731bce3faeb060101efc7c629262854bb34
 - [ ] Entrega final
 
 ---
