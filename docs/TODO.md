@@ -67,10 +67,10 @@
 - [x] Adicionar filtros e variáveis
 <<<<<<< HEAD
 =======
-- [ ] Criar modelos de visualização que vão tomar o lugar do Grafana
+- [x] Criar modelos de visualização que vão tomar o lugar do Grafana
 - [ ] Substituir os graficos do grafana pelos novos
 >>>>>>> a6ba1731bce3faeb060101efc7c629262854bb34
-- [ ] Testar responsividade
+- [x] Testar responsividade
 
 ---
 
