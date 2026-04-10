@@ -150,30 +150,32 @@ export default function Home() {
           onSwitchTab={setActiveTab}
           onOpenConfig={() => setConfigModalOpen(true)}
         />
-        <Sidebar
-          hidden={activeTab === 'monitor'}
-          chatHistory={chatHistory}
-          currentChatId={currentChatId}
-          onNewChat={createNewChat}
-          onLoadChat={loadChat}
-          onDeleteChat={deleteChat}
-        />
-        <ChatView
-          hidden={activeTab !== 'chat'}
-          messages={currentMessages}
-          setMessages={setCurrentMessages}
-          currentChatId={currentChatId}
-          setCurrentChatId={setCurrentChatId}
-          currentLocationId={currentLocationId}
-          apiBaseUrl={apiBaseUrl}
-          onHistoryUpdate={loadChatHistory}
-          onTitleUpdate={setChatTitle}
-        />
-        <MonitorView
-          hidden={activeTab !== 'monitor'}
-          apiBaseUrl={apiBaseUrl}
-          onOpenConfig={() => setConfigModalOpen(true)}
-        />
+        {activeTab === 'chat' && (
+          <Sidebar
+            chatHistory={chatHistory}
+            currentChatId={currentChatId}
+            onNewChat={createNewChat}
+            onLoadChat={loadChat}
+            onDeleteChat={deleteChat}
+          />
+        )}
+        {activeTab === 'chat' ? (
+          <ChatView
+            messages={currentMessages}
+            setMessages={setCurrentMessages}
+            currentChatId={currentChatId}
+            setCurrentChatId={setCurrentChatId}
+            currentLocationId={currentLocationId}
+            apiBaseUrl={apiBaseUrl}
+            onHistoryUpdate={loadChatHistory}
+            onTitleUpdate={setChatTitle}
+          />
+        ) : (
+          <MonitorView
+            apiBaseUrl={apiBaseUrl}
+            onOpenConfig={() => setConfigModalOpen(true)}
+          />
+        )}
       </div>
 
       <ConfigModal

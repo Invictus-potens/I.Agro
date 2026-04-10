@@ -45,7 +45,6 @@ function TypingIndicator() {
 }
 
 export default function ChatView({
-  hidden,
   messages,
   setMessages,
   currentChatId,
@@ -156,7 +155,7 @@ export default function ChatView({
   }
 
   return (
-    <main className={`chat-container${hidden ? ' hidden' : ''}`}>
+    <main className="chat-container">
       {showWelcome && (
         <div className="chat-welcome">
           <div className="welcome-content">
