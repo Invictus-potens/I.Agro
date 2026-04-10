@@ -29,7 +29,6 @@ function groupChatsByDate(chats) {
 }
 
 export default function Sidebar({
-  hidden,
   chatHistory,
   currentChatId,
   onNewChat,
@@ -41,7 +40,7 @@ export default function Sidebar({
     : null;
 
   return (
-    <aside className={`sidebar${hidden ? ' hidden' : ''}`}>
+    <aside className="sidebar">
       <div className="sidebar-brand">
         <span className="brand-mark">✦</span>
         <span className="brand-name">I.Agro</span>

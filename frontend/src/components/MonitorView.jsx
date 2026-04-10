@@ -379,7 +379,7 @@ function HourlyChart({ hours, date }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function MonitorView({ hidden, apiBaseUrl, onOpenConfig }) {
+export default function MonitorView({ apiBaseUrl, onOpenConfig }) {
   const [locations, setLocations]         = useState([]);
   const [selectedId, setSelectedId]       = useState(null);
   const [locationData, setLocationData]   = useState(null);
@@ -421,7 +421,7 @@ export default function MonitorView({ hidden, apiBaseUrl, onOpenConfig }) {
   const selectedDay = selectedDayIdx != null ? locationData?.forecasts?.[selectedDayIdx] : null;
 
   return (
-    <section className={`monitor-container${hidden ? ' hidden' : ''}`}>
+    <section className="monitor-container">
       {/* Header */}
       <div className="dashboard-header">
         <div className="location-tabs">
