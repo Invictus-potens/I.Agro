@@ -150,7 +150,11 @@ def get_location(id: int, session: Session = Depends(get_session)):
     loc = session.get(Location, id)
     if not loc:
         raise HTTPException(404, "not found")
-    cw = session.exec(select(CurrentWeather).where(CurrentWeather.location_id == id)).first()
+    cw = session.exec(
+        select(CurrentWeather)
+        .where(CurrentWeather.location_id == id)
+        .order_by(CurrentWeather.data_hora.desc())
+    ).first()
     days = session.exec(select(ForecastDay).where(ForecastDay.location_id == id)).all()
     days_with_hours = []
     for day in days:

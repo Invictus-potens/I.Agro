@@ -334,7 +334,7 @@ function HourlyChart({ hours, date }) {
     humidity:    h.humidity,
     precip_mm:   h.precip_mm,
     uv:          h.uv,
-    icon:        h.icon_url ? `https:${h.icon_url}` : null,
+    icon:        h.icon_url || null,
   }));
 
   return (
