@@ -1,7 +1,7 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
 
 FROM node:20-alpine AS builder
 WORKDIR /app
@@ -19,6 +19,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-EXPOSE 3000
-ENV PORT=3000
+EXPOSE 8005
+ENV PORT=8005
 CMD ["node", "server.js"]

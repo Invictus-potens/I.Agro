@@ -21,8 +21,8 @@ jobs:
           script: |
             cd ~/desenvolvimento/faculdade/farmer-s_companion
             git pull origin main
-            docker compose up -d --build --no-deps backend
-            NEXT_PUBLIC_API_URL="${{ vars.NEXT_PUBLIC_API_URL }}" docker compose up -d --build --no-deps frontend
+            docker compose up -d --build --no-deps --remove-orphans backend
+            NEXT_PUBLIC_API_URL="${{ vars.NEXT_PUBLIC_API_URL }}" docker compose up -d --build --no-deps --remove-orphans frontend
 
       - name: Notify Discord - Success
         if: success()

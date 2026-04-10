@@ -65,9 +65,9 @@
 - [x] Configurar refresh automático
 - [x] Personalizar tema e layout
 - [x] Adicionar filtros e variáveis
-- [ ] Criar modelos de visualização que vão tomar o lugar do Grafana
+- [x] Criar modelos de visualização que vão tomar o lugar do Grafana
 - [ ] Substituir os graficos do grafana pelos novos
-- [ ] Testar responsividade
+- [x] Testar responsividade
 
 ---
 
