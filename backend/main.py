@@ -305,6 +305,17 @@ def list_current_weather(session: Session = Depends(get_session)):
     return session.exec(select(CurrentWeather)).all()
 
 
+@app.get("/current-weather/history/{location_id}")
+def get_weather_history(location_id: int, limit: int = 48, session: Session = Depends(get_session)):
+    records = session.exec(
+        select(CurrentWeather)
+        .where(CurrentWeather.location_id == location_id)
+        .order_by(CurrentWeather.data_hora.desc())
+        .limit(limit)
+    ).all()
+    return [r.model_dump() for r in records]
+
+
 @app.get("/current-weather/{id}")
 def get_current_weather(id: int, session: Session = Depends(get_session)):
     cw = session.get(CurrentWeather, id)

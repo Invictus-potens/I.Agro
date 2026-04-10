@@ -38,7 +38,6 @@ export default function Home() {
   const [currentMessages, setCurrentMessages] = useState([]);
   const [currentLocationId, setCurrentLocationId] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
-  const [grafanaUrl, setGrafanaUrl] = useState('');
   const [apiBaseUrl, setApiBaseUrl] = useState('');
   const [configModalOpen, setConfigModalOpen] = useState(false);
   const [chatTitle, setChatTitle] = useState('Novo Planejamento');
@@ -50,9 +49,6 @@ export default function Home() {
     } else {
       setApiBaseUrl(getDefaultApiUrl());
     }
-
-    const savedGrafana = localStorage.getItem('agroGrafanaUrl') || '';
-    setGrafanaUrl(savedGrafana);
   }, []);
 
   useEffect(() => {
@@ -138,11 +134,9 @@ export default function Home() {
     }
   }
 
-  function handleSaveConfig({ grafanaUrl: newGrafana, apiBaseUrl: newApi }) {
+  function handleSaveConfig({ apiBaseUrl: newApi }) {
     const normalizedApi = normalizeApiUrl(newApi || getDefaultApiUrl());
-    setGrafanaUrl(newGrafana);
     setApiBaseUrl(normalizedApi);
-    localStorage.setItem('agroGrafanaUrl', newGrafana);
     localStorage.setItem('agroApiUrl', normalizedApi);
     setConfigModalOpen(false);
   }
@@ -177,14 +171,13 @@ export default function Home() {
         />
         <MonitorView
           hidden={activeTab !== 'monitor'}
-          grafanaUrl={grafanaUrl}
+          apiBaseUrl={apiBaseUrl}
           onOpenConfig={() => setConfigModalOpen(true)}
         />
       </div>
 
       <ConfigModal
         isOpen={configModalOpen}
-        grafanaUrl={grafanaUrl}
         apiBaseUrl={apiBaseUrl}
         onSave={handleSaveConfig}
         onClose={() => setConfigModalOpen(false)}

@@ -2,21 +2,19 @@
 
 import { useState, useEffect } from 'react';
 
-export default function ConfigModal({ isOpen, grafanaUrl, apiBaseUrl, onSave, onClose }) {
-  const [grafanaInput, setGrafanaInput] = useState('');
+export default function ConfigModal({ isOpen, apiBaseUrl, onSave, onClose }) {
   const [apiInput, setApiInput] = useState('');
 
   useEffect(() => {
     if (isOpen) {
-      setGrafanaInput(grafanaUrl || '');
       setApiInput(apiBaseUrl || '');
     }
-  }, [isOpen, grafanaUrl, apiBaseUrl]);
+  }, [isOpen, apiBaseUrl]);
 
   if (!isOpen) return null;
 
   function handleSave() {
-    onSave({ grafanaUrl: grafanaInput.trim(), apiBaseUrl: apiInput.trim() });
+    onSave({ apiBaseUrl: apiInput.trim() });
   }
 
   function handleOverlayClick(e) {
@@ -31,20 +29,6 @@ export default function ConfigModal({ isOpen, grafanaUrl, apiBaseUrl, onSave, on
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">
-          <div className="config-group">
-            <label htmlFor="grafanaUrlInput">URL do Dashboard Grafana</label>
-            <input
-              id="grafanaUrlInput"
-              type="text"
-              value={grafanaInput}
-              onChange={e => setGrafanaInput(e.target.value)}
-              placeholder="http://localhost:8005/d/..."
-              className="modal-input"
-            />
-            <p className="modal-hint">
-              Para embutir corretamente, ative <code>allow_embedding = true</code> nas configurações do Grafana.
-            </p>
-          </div>
           <div className="config-group">
             <label htmlFor="apiUrlInput">URL da API Backend</label>
             <input
