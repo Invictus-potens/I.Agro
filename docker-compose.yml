@@ -16,7 +16,7 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
     ports:
-      - "3500:3500"
+      - "3500:8005"
     restart: unless-stopped
     depends_on:
       - backend
