@@ -14,10 +14,16 @@ _root = Path(__file__).resolve().parent.parent
 load_dotenv(_root / ".env")
 sys.path.insert(0, str(_root))
 
+<<<<<<< HEAD
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+=======
+
+from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi.middleware.cors import CORSMiddleware
+>>>>>>> a6ba1731bce3faeb060101efc7c629262854bb34
 from pydantic import BaseModel
 from sqlmodel import Session, select
 
@@ -36,6 +42,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+<<<<<<< HEAD
 # ── Frontend estático ─────────────────────────────────────────────────────────
 _front = _root / "frontend"
 app.mount("/assets", StaticFiles(directory=str(_front / "assets")), name="assets")
@@ -46,6 +53,8 @@ def index():
     return FileResponse(str(_front / "index.html"))
 
 
+=======
+>>>>>>> a6ba1731bce3faeb060101efc7c629262854bb34
 @app.get("/api/config")
 def get_public_config(request: Request):
     api_base_url = os.getenv("NODE_API_URL")
