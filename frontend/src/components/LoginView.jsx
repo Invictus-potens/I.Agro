@@ -47,7 +47,7 @@ export default function LoginView({ apiBaseUrl, onLogin }) {
     <div className="login-wrapper">
       <div className="login-card">
         <div className="login-brand">
-          <img src="/img/favicon.png" alt="I.Agro" className="login-logo" />
+          <div className="welcome-emblem">✦</div>
           <h1 className="login-title">I.Agro</h1>
           <p className="login-subtitle">Companheiro Agrícola Inteligente</p>
         </div>
