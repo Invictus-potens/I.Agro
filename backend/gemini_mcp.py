@@ -21,11 +21,13 @@ logger = logging.getLogger(__name__)
 
 MAX_TOOL_ROUNDS = 8
 MODEL_NAME = "gemini-2.0-flash"
-MCP_SYSTEM_SUFFIX = (
-    " Quando fizer sentido, use as ferramentas MCP conectadas ao banco para dados "
-    "estruturados (prefira SELECT). Não invente nomes de tabelas ou colunas sem "
-    "confirmar no schema."
-)
+MCP_SYSTEM_SUFFIX = """
+    ### REGRAS DE CONSULTA AO BANCO (FERRAMENTAS MCP)
+- **Acionamento:** Sempre que o usuário solicitar informações que dependam de registros estruturados, invoque imediatamente as ferramentas MCP para consultar o banco.
+- **Operações Restritas (Read-Only):** Formule estritamente consultas de leitura (`SELECT`). É expressamente proibido tentar operações de escrita, alteração ou exclusão.
+- **Verificação Rigorosa de Schema:** NUNCA invente, presuma ou tente adivinhar nomes de bancos, tabelas, views, colunas ou relações. 
+- **Confirmação Obrigatória:** Você só tem permissão para montar uma query usando nomes de tabelas e colunas que foram explicitamente fornecidos no contexto ou previamente listados/confirmados através de uma ferramenta de checagem de schema do MCP.
+"""
 
 
 def _history_to_gemini(history: list | None) -> list[dict[str, Any]]:
