@@ -29,7 +29,7 @@ services:
     env_file:
       - .env
     command: >
-      sh -c "npx -y supergateway --port 8090 --outputTransport streamable-http
+      sh -c "npx -y supergateway --port 8090 --outputTransport streamableHttp
       --stdio 'npx -y @modelcontextprotocol/server-postgres ${DATABASE_URL}'"
     ports:
       - "8090:8090"
