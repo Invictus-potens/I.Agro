@@ -7,6 +7,10 @@ services:
       - "8005:8005"
     env_file:
       - .env
+    environment:
+      MCP_SERVER_URL: http://mcp-postgres:8090
+    depends_on:
+      - mcp-postgres
     restart: unless-stopped
 
   frontend:
@@ -24,7 +28,7 @@ services:
     depends_on:
       - backend
 
-  mcp-postgres:
+   mcp-postgres:
     image: node:20-alpine
     env_file:
       - .env
@@ -34,3 +38,4 @@ services:
     ports:
       - "8090:8090"
     restart: unless-stopped
+    

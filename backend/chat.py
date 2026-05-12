@@ -1,10 +1,15 @@
 """
 Lógica do chat: acesso ao banco de dados, chamada direta ao Gemini e handler.
 """
+import logging
 import os
 from typing import Any
 
 import google.generativeai as genai
+
+from backend.services import mcp_client
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = (
     "Você é um assistente agrícola especializado em clima e agricultura brasileira. "
@@ -68,15 +73,16 @@ def build_weather_context(data: dict[str, Any]) -> str:
     return " ".join(parts) if parts else "Sem dados de clima disponíveis."
 
 
-def call_gemini(message: str, history: list | None = None, contexto_clima: str | None = None) -> str:
-    """Chama o Gemini diretamente via SDK, substituindo o webhook n8n."""
+def call_gemini_simple(
+    message: str, history: list | None = None, contexto_clima: str | None = None
+) -> str:
+    """Chama o Gemini via SDK sem ferramentas MCP."""
     genai.configure(api_key=os.getenv("GEMINI_API_KEY", ""))
     model = genai.GenerativeModel(
         model_name="gemini-2.0-flash",
         system_instruction=SYSTEM_PROMPT,
     )
 
-    # Converte histórico do formato {role, content} para o formato Gemini {role, parts}
     gemini_history = []
     for msg in (history or []):
         role = "model" if msg.get("role") == "assistant" else "user"
@@ -92,6 +98,28 @@ def call_gemini(message: str, history: list | None = None, contexto_clima: str |
         return response.text.strip()
     except Exception as e:
         return f"Erro ao contatar o Gemini: {str(e)}"
+
+
+def call_gemini(message: str, history: list | None = None, contexto_clima: str | None = None) -> str:
+    """
+    Chama o Gemini. Se MCP_SERVER_URL estiver definida e o fluxo MCP+tools funcionar,
+    usa function calling contra o servidor MCP; caso contrário, cai no caminho simples.
+    """
+    mcp_url = mcp_client.mcp_url_from_env()
+    if mcp_url:
+        try:
+            from backend.gemini_mcp import run_gemini_with_mcp_tools
+
+            return run_gemini_with_mcp_tools(
+                message=message,
+                history=history,
+                contexto_clima=contexto_clima,
+                system_instruction=SYSTEM_PROMPT,
+                mcp_url=mcp_url,
+            )
+        except Exception as e:
+            logger.warning("Fluxo MCP+Gemini indisponível, usando chat simples: %s", e, exc_info=True)
+    return call_gemini_simple(message, history=history, contexto_clima=contexto_clima)
 
 
 def handle_chat(
