@@ -23,3 +23,14 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+
+  mcp-postgres:
+    image: node:20-alpine
+    env_file:
+      - .env
+    command: >
+      sh -c "npx -y supergateway --port 8090
+      --stdio 'npx -y @modelcontextprotocol/server-postgres ${DATABASE_URL}'"
+    ports:
+      - "8090:8090"
+    restart: unless-stopped

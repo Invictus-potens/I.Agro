@@ -1,12 +1,17 @@
 """
-Lógica do chat: acesso ao banco de dados, webhook n8n e handler.
+Lógica do chat: acesso ao banco de dados, chamada direta ao Gemini e handler.
 """
 import os
 from typing import Any
 
-import httpx
+import google.generativeai as genai
 
-WEBHOOK_URL = "https://n8n.pradortiz.lat/webhook/319e00f2-eeb7-42fc-bd95-7d3b90d97cdc"
+SYSTEM_PROMPT = (
+    "Você é um assistente agrícola especializado em clima e agricultura brasileira. "
+    "Responda em português, de forma clara e objetiva. "
+    "Use os dados de clima fornecidos no contexto para embasar suas respostas sobre "
+    "previsões, plantio, irrigação e manejo de culturas."
+)
 
 
 def get_location_with_weather(location_id: int) -> dict[str, Any] | None:
@@ -63,33 +68,30 @@ def build_weather_context(data: dict[str, Any]) -> str:
     return " ".join(parts) if parts else "Sem dados de clima disponíveis."
 
 
-def call_webhook(message: str, history: list | None = None, contexto_clima: str | None = None) -> str:
-    """Envia a mensagem para o webhook n8n e retorna a resposta."""
-    payload = {
-        "message": message,
-        "history": history or [],
-        "contexto_clima": contexto_clima or "",
-    }
+def call_gemini(message: str, history: list | None = None, contexto_clima: str | None = None) -> str:
+    """Chama o Gemini diretamente via SDK, substituindo o webhook n8n."""
+    genai.configure(api_key=os.getenv("GEMINI_API_KEY", ""))
+    model = genai.GenerativeModel(
+        model_name="gemini-2.0-flash",
+        system_instruction=SYSTEM_PROMPT,
+    )
+
+    # Converte histórico do formato {role, content} para o formato Gemini {role, parts}
+    gemini_history = []
+    for msg in (history or []):
+        role = "model" if msg.get("role") == "assistant" else "user"
+        gemini_history.append({"role": role, "parts": [msg.get("content", "")]})
+
+    user_content = message
+    if contexto_clima:
+        user_content = f"Contexto do clima:\n{contexto_clima}\n\nPergunta: {message}"
+
+    chat = model.start_chat(history=gemini_history)
     try:
-        with httpx.Client(timeout=120.0) as client:
-            response = client.post(WEBHOOK_URL, json=payload)
-            response.raise_for_status()
-            data = response.json()
-            # Aceita diferentes formatos de resposta do n8n
-            reply = (
-                data.get("reply")
-                or data.get("message")
-                or data.get("output")
-                or data.get("text")
-                or (data[0].get("reply") or data[0].get("message") or data[0].get("output") or data[0].get("text") if isinstance(data, list) and data else None)
-            )
-            if not reply:
-                return "Não foi possível obter resposta da IA."
-            return str(reply).strip()
-    except httpx.TimeoutException:
-        return "A IA demorou muito para responder. Tente novamente."
+        response = chat.send_message(user_content, request_options={"timeout": 120})
+        return response.text.strip()
     except Exception as e:
-        return f"Erro ao contatar o assistente: {str(e)}"
+        return f"Erro ao contatar o Gemini: {str(e)}"
 
 
 def handle_chat(
@@ -114,4 +116,4 @@ def handle_chat(
         else:
             contexto_clima = "Dados da região temporariamente indisponíveis."
 
-    return call_webhook(msg, history=history or [], contexto_clima=contexto_clima)
+    return call_gemini(msg, history=history or [], contexto_clima=contexto_clima)
