@@ -10,7 +10,8 @@ services:
     environment:
       MCP_SERVER_URL: http://mcp-postgres:8090
     depends_on:
-      - mcp-postgres
+      mcp-postgres:
+        condition: service_healthy
     restart: unless-stopped
 
   frontend:
@@ -28,14 +29,29 @@ services:
     depends_on:
       - backend
 
-   mcp-postgres:
+  mcp-postgres:
     image: node:20-alpine
     env_file:
       - .env
-    command: >
-      sh -c "npx -y supergateway --port 8090 --outputTransport streamableHttp
-      --stdio 'npx -y @modelcontextprotocol/server-postgres ${DATABASE_URL}'"
+    command:
+      - sh
+      - -c
+      - |
+        if [ -z "$$DATABASE_URL" ]; then echo "DATABASE_URL vazia"; exit 1; fi
+        exec npx -y supergateway --port 8090 --outputTransport streamableHttp \
+          --stdio "npx -y @modelcontextprotocol/server-postgres@0.6.2 $$DATABASE_URL"
     ports:
       - "8090:8090"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8090/mcp').then(()=>process.exit(0)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 8
+      start_period: 90s
     restart: unless-stopped
-    
