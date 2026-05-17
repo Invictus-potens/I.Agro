@@ -23,6 +23,7 @@ from backend.chat import (
     history_to_gemini,
     is_weather_question,
     message_needs_city_prompt,
+    needs_db_query,
     parse_context_hints,
     resolve_query_location_id,
 )
@@ -179,7 +180,7 @@ async def _run_fallback_weather_query(
     history: list | None,
 ) -> dict[str, Any] | None:
     """Consulta MCP obrigatória quando o Gemini não chama query mas há cidade resolvida."""
-    if not is_weather_question(message):
+    if not needs_db_query(message):
         return None
     if resolve_query_location_id(message, locations, location_id, history) is None:
         return None
@@ -213,6 +214,7 @@ async def _run_gemini_chat(session: ClientSession, **kwargs: Any) -> str:
     contexto_clima: str | None = kwargs["contexto_clima"]
     system_instruction: str = kwargs["system_instruction"]
     location_id: int | None = kwargs.get("location_id")
+    db_required = needs_db_query(message)
 
     mcp_tools = await mcp_client.list_tools_on_session(session)
     if not mcp_tools:
@@ -272,15 +274,19 @@ async def _run_gemini_chat(session: ClientSession, **kwargs: Any) -> str:
             text = _extract_text(response)
             if text and tool_calls_made > 0:
                 return text
+            # Perguntas de conhecimento agrícola puro: aceita resposta sem banco
+            if not db_required and text:
+                return text
             if tool_calls_made == 0 and not nudged_without_tools:
                 nudged_without_tools = True
-                logger.info("Gemini respondeu sem MCP; exigindo consulta query")
-                response = chat.send_message(
-                    MCP_FORCE_QUERY_NUDGE,
-                    tools=declarations,
-                    request_options={"timeout": 120},
-                )
-                continue
+                if db_required:
+                    logger.info("Gemini respondeu sem MCP; exigindo consulta query")
+                    response = chat.send_message(
+                        MCP_FORCE_QUERY_NUDGE,
+                        tools=declarations,
+                        request_options={"timeout": 120},
+                    )
+                    continue
             if tool_calls_made == 0:
                 if not weather_data_fetched:
                     payload = await _run_fallback_weather_query(
@@ -310,13 +316,17 @@ async def _run_gemini_chat(session: ClientSession, **kwargs: Any) -> str:
                             request_options={"timeout": 120},
                         )
                         continue
+                if db_required:
+                    return (
+                        "Não consegui consultar o banco de dados para responder. "
+                        "Tente reformular a pergunta sobre sua cidade."
+                    )
                 return (
-                    "Não consegui consultar o banco de dados para responder. "
-                    "Tente reformular a pergunta sobre sua cidade."
+                    "Não consegui gerar uma resposta para essa pergunta. "
+                    "Pode tentar reformular?"
                 )
             if text:
                 return text
-            fr = response.candidates[0].finish_reason if response.candidates else None
             if tool_calls_made > 0:
                 return (
                     "Recebi os dados do banco, mas não consegui montar a resposta agora. "
@@ -386,7 +396,7 @@ async def _run_gemini_chat(session: ClientSession, **kwargs: Any) -> str:
             request_options={"timeout": 120},
         )
 
-    if tool_calls_made == 0:
+    if tool_calls_made == 0 and db_required:
         return (
             "Não consegui consultar o banco de dados para responder. "
             "Tente reformular a pergunta sobre o tempo na sua cidade."

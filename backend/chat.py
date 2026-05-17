@@ -12,9 +12,24 @@ from backend.services import mcp_client
 
 logger = logging.getLogger(__name__)
 
+WEATHER_DB_KEYWORDS = re.compile(
+    r"\b(clima|tempo|chuva|chuvas|previs|geada|granizo|vento|temperatura|calor|frio|"
+    r"seca|irriga|umidade|garoa|temporal|alerta)\b",
+    re.IGNORECASE,
+)
+AGRO_KEYWORDS = re.compile(
+    r"\b(plantio|colheita|colher|plantar|solo|adubo|adub|fertiliz|semea|sement|poda|"
+    r"praga|doenca|fungo|nutriente|calcario|ph|cultura|safra|lavoura|cultiv|"
+    r"milho|soja|cafe|cana|tomate|trigo|feijao|arroz|mandioca|hortalica|fruta|"
+    r"irrigacao|espacamento|maturacao|brotacao|germinacao)\b",
+    re.IGNORECASE,
+)
 WEATHER_KEYWORDS = re.compile(
     r"\b(clima|tempo|chuva|chuvas|previs|geada|granizo|vento|temperatura|calor|frio|"
-    r"seca|irriga|plantio|colheita|alerta|umidade|garoa|temporal)\b",
+    r"seca|irriga|plantio|colheita|colher|plantar|alerta|umidade|garoa|temporal|"
+    r"solo|adubo|adub|fertiliz|semea|sement|poda|praga|doenca|fungo|nutriente|"
+    r"calcario|cultura|safra|lavoura|cultiv|milho|soja|cafe|cana|tomate|trigo|"
+    r"feijao|arroz|mandioca|hortalica|fruta)\b",
     re.IGNORECASE,
 )
 LIST_CITIES_PATTERN = re.compile(
@@ -24,7 +39,7 @@ LIST_CITIES_PATTERN = re.compile(
 )
 
 SYSTEM_PROMPT = """
-Você é o I.Agro, assistente de clima para agricultores no Brasil.
+Você é o I.Agro, assistente agrícola para agricultores no Brasil.
 
 ## COMO FALAR (OBRIGATÓRIO)
 - Linguagem simples, como numa conversa no campo. Evite termos técnicos, siglas e inglês.
@@ -37,31 +52,52 @@ Você é o I.Agro, assistente de clima para agricultores no Brasil.
   - Se fizer sentido, feche com uma linha de dica prática (pulverizar, irrigar, adiar colheita).
 - Não cite nomes de campos do banco, APIs, MCP, UV nem textos em inglês. Traduza a situação: "pode chover", "dia de sol", "calor forte".
 - Datas: prefira "hoje", "amanhã", "depois de amanhã" ou "dia 16/05", não só 2026-05-16.
-- Não invente números; use só o que vier das consultas ao banco.
+- Não invente números meteorológicos; use só o que vier das consultas ao banco.
 
-### CIDADE (MUITO IMPORTANTE)
+### CIDADE (SOMENTE PARA PERGUNTAS DE CLIMA)
 - Responda SOMENTE para a cidade que o produtor pediu na mensagem atual.
-- Se a pergunta não disser a cidade e não houver cidade padrão no contexto, PERGUNTE:
+- Se a pergunta for sobre clima/previsão e não disser a cidade e não houver cidade padrão no contexto, PERGUNTE:
   "De qual cidade você quer saber? Tenho dados para: …" (use a lista [Cidades no banco]).
-- Nunca use dados de uma cidade para responder sobre outra (ex.: não fale Serrana quando perguntaram Campinas).
-- Se o usuário citar uma cidade, consulte locations por nome antes da previsão.
+- Nunca use dados de uma cidade para responder sobre outra.
 - Se a cidade não existir no banco, diga quais cidades existem (consulta em locations) — não invente.
 
 ### ESCOPO
-- Só agricultura, clima e manejo no campo. Fora disso, recuse com educação e convide a perguntar sobre o tempo na lavoura.
+- Agricultura, clima, solo e manejo no campo. Fora disso, recuse com educação.
 
-### FLUXO OBRIGATÓRIO (FERRAMENTA query) — NUNCA PULE
-Para qualquer pergunta sobre clima, tempo, chuva, temperatura ou previsão:
+## DOIS MODOS DE RESPOSTA
 
-1. PRIMEIRO: chame a ferramenta query com parâmetro sql contendo um SELECT completo.
+### MODO 1 — CLIMA E PREVISÃO (use obrigatoriamente a ferramenta query)
+Para perguntas sobre chuva, temperatura, previsão do tempo, vento, geada, seca, umidade ou
+irrigação baseada no tempo atual/futuro:
+1. PRIMEIRO: chame a ferramenta query com sql contendo um SELECT completo.
 2. Confirme a cidade (nome na pergunta ou lista em locations).
-3. Depois: current_weather (última medição) e forecast_days (date >= "Hoje:" do contexto).
-4. SOMENTE DEPOIS: escreva a resposta em português simples.
+3. Busque current_weather (última medição) e forecast_days (date >= "Hoje:" do contexto).
+4. SOMENTE DEPOIS: escreva a resposta em português simples com base nos dados reais.
 
 Regras rígidas:
-- Nunca invente números.
+- Nunca invente números meteorológicos.
 - Não diga "vou consultar" — apenas chame a ferramenta.
 - A linha "Hoje:" no contexto é a data de referência para forecast_days.date >= hoje.
+
+### MODO 2 — CONHECIMENTO AGRÍCOLA (responda diretamente, sem usar a ferramenta query)
+Para perguntas sobre:
+- Preparo e qualidade do solo (pH, nutrientes, estrutura, matéria orgânica)
+- Adubação e fertilização (NPK, calcário, orgânicos)
+- Técnicas de plantio (espaçamento, profundidade, época de semeadura por região/clima geral)
+- Manejo de pragas, doenças e controle biológico ou químico
+- Ponto de colheita e maturação de culturas
+- Irrigação por técnica (gotejamento, aspersão, sulcos) sem depender do tempo atual
+- Calendário agrícola geral de culturas (milho, soja, tomate, feijão, etc.)
+- Qualquer conhecimento agronômico que não dependa de dados meteorológicos em tempo real
+
+Para estes casos: RESPONDA DIRETAMENTE com seu conhecimento. NÃO chame a ferramenta query.
+
+### MODO 3 — CLIMA + TÉCNICA COMBINADOS (use a ferramenta query e depois aplique o conhecimento)
+Se a pergunta misturar condições climáticas atuais/futuras COM uma decisão agrícola
+(ex: "posso colher o milho amanhã com chuva prevista?", "devo irrigar hoje?", "é seguro aplicar defensivo esta semana?"):
+1. Consulte o banco para obter dados meteorológicos da cidade.
+2. Combine os dados reais com o conhecimento agronômico.
+3. Dê uma recomendação prática e clara.
 """
 
 TZ_BR = ZoneInfo("America/Sao_Paulo")
@@ -80,6 +116,11 @@ def _normalize_text(value: str) -> str:
 
 def is_weather_question(message: str) -> bool:
     return bool(WEATHER_KEYWORDS.search(message or ""))
+
+
+def needs_db_query(message: str) -> bool:
+    """Retorna True apenas quando a pergunta exige dados meteorológicos do banco."""
+    return bool(WEATHER_DB_KEYWORDS.search(message or ""))
 
 
 def is_list_cities_question(message: str) -> bool:
@@ -194,7 +235,7 @@ def message_needs_city_prompt(
     default_location_id: int | None,
     history: list | None = None,
 ) -> bool:
-    if not is_weather_question(message):
+    if not needs_db_query(message):
         return False
     if is_list_cities_question(message):
         return False
