@@ -21,7 +21,7 @@ jobs:
           script: |
             cd ~/desenvolvimento/faculdade/farmer-s_companion
             git pull origin main
-            docker compose up -d --build --no-deps --remove-orphans backend
+            docker compose up -d --build --no-deps --remove-orphans backend mcp-postgres
             NEXT_PUBLIC_API_URL="${{ vars.NEXT_PUBLIC_API_URL }}" docker compose up -d --build --no-deps --remove-orphans frontend
 
       - name: Notify Discord - Success

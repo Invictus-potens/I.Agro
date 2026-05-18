@@ -5,6 +5,7 @@ sqlmodel
 fastapi
 uvicorn
 httpx
+mcp
 google-generativeai
 bcrypt
 python-jose[cryptography]
