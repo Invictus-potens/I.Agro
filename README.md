@@ -1,6 +1,9 @@
-# Assistente IA para Agricultura
-
-Projeto de prática extensionista - Engenharia de Software, Ano 3 - Unaerp, Ribeirão Preto.
+<div align = "center">
+<img src = "https://img.icons8.com/?size=100&id=18047&format=png&color=000000" width = "60" />
+   
+# I.Agro - Assistente IA para Agricultura
+</div>
+Projeto de Industria 4.0 - Engenharia de Software, Ano 3 - Unaerp, Ribeirão Preto.
 
 ## Sumário
 

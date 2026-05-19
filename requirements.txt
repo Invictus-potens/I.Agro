@@ -2,3 +2,10 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 sqlmodel
+fastapi
+uvicorn
+httpx
+mcp
+google-generativeai
+bcrypt
+python-jose[cryptography]
