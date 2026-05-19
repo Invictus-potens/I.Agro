@@ -24,6 +24,19 @@ services:
     environment:
       - BACKEND_URL=http://backend:8005
     ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - tool_net
+
+volumes:
+  postgres_data:
+
+networks:
+  tool_net:
+    external: true
       - "3500:8005"
     restart: unless-stopped
     depends_on:
