@@ -11,6 +11,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+    networks:
+      - tool_net
 
 volumes:
   postgres_data:
+
+networks:
+  tool_net:
+    external: true
