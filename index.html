@@ -395,11 +395,11 @@
         </tr>
         <tr>
           <td class="meta-label">Data</td>
-          <td class="meta-value">03/19/2026</td>
+          <td class="meta-value">26/05/2026</td>
         </tr>
         <tr>
           <td class="meta-label">Versão</td>
-          <td class="meta-value">1.0</td>
+          <td class="meta-value">1.1</td>
         </tr>
       </tbody>
     </table>
@@ -422,7 +422,8 @@
           <li><span class="toc-num">05</span><a href="#equipe">Equipe</a></li>
           <li><span class="toc-num">06</span><a href="#todo">Próximos Passos / TODO</a></li>
           <li><span class="toc-num">07</span><a href="#interface">Interface do projeto</a></li>
-          <li><span class="toc-num">08</span><a href="#links">Links</a></li>
+          <li><span class="toc-num">08</span><a href="#atualizacoes">Atualizações Recentes</a></li>
+          <li><span class="toc-num">09</span><a href="#links">Links</a></li>
         </ul>
       </div>
     </div>
@@ -590,19 +591,21 @@
           B["n8n Automation\nColeta agendada de dados"]
           C(["PostgreSQL\nArmazenamento de dados"])
           D["Python REST API\nFastAPI — CRUD e chatbot"]
-          E["Gemini 2.5 Flash\nIA — prompts / respostas"]
-          F["Grafana\nTime series · leitura DB"]
+          E["Gemini 2.5 Flash\nIA — raciocínio local"]
+          F["Dashboard Nativo\nTabelas CSS no Frontend"]
           G["Frontend\nSite web · HTML5 / CSS"]
           H["Usuário\nAgricultor / Fazendeiro"]
+          M["MCP Service\nBusca estruturada de dados"]
 
           A -->|dados climáticos| B
           B -->|logs automáticos| C
           C -->|queries CRUD| D
-          C -.->|leitura direta| F
-          D -->|prompts| E
+          C -->|dados estruturados| M
+          M -->|contexto enriquecido| E
+          D -->|prompts + diretório do projeto| E
           E -->|respostas| D
-          D --> F
           D --> G
+          G --> F
           F --> H
           G --> H</div>
                     </div>
@@ -768,11 +771,15 @@
             </tr>
             <tr>
               <td class="td-label">Monitoramento</td>
-              <td>Grafana</td>
+              <td>Tabelas nativas em CSS (substituiu o Grafana)</td>
             </tr>
             <tr>
               <td class="td-label">IA / Chatbot</td>
-              <td>gemini-2.5-flash</td>
+              <td>gemini-2.5-flash (raciocínio via diretório local do projeto)</td>
+            </tr>
+            <tr>
+              <td class="td-label">MCP Service</td>
+              <td>Model Context Protocol — busca e estruturação de dados para a IA</td>
             </tr>
             <tr>
               <td class="td-label">API Climática</td>
@@ -926,13 +933,111 @@
   </div>
 
 
+
+
   <!-- ══════════════════════════════════════
-       8. LINKS
+       8. ATUALIZAÇÕES RECENTES
+  ══════════════════════════════════════ -->
+  <div class="row" id="atualizacoes">
+    <div class="twelve columns">
+      <div class="section-block">
+        <span class="section-number">— seção 08</span>
+        <h2 class="section-title">Atualizações Recentes</h2>
+        <p style="font-size:0.95rem;line-height:1.7;color:var(--gray-text);">
+          Abaixo estão registradas as mudanças mais recentes realizadas no projeto, com explicação clara do que foi alterado e por quê.
+        </p>
+
+        <!-- Mudança 1 -->
+        <h3 class="sub-title">9.1 Substituição do Grafana por Tabelas Nativas em CSS</h3>
+        <p style="font-size:0.95rem;line-height:1.7;color:var(--gray-text);">
+          As visualizações de dados que antes eram exibidas através de painéis do <strong>Grafana</strong> foram substituídas por
+          <strong>tabelas nativas construídas diretamente em HTML e CSS</strong>, integradas ao próprio frontend do projeto.
+        </p>
+        <div class="note-box">
+          Por que a mudança? O Grafana exigia uma instância de servidor separada e dependência de serviço externo para renderizar os gráficos.
+          Com tabelas nativas, os dados são carregados diretamente pela API do backend, o visual fica consistente com o restante do site,
+          e a manutenção fica concentrada em um único lugar — sem infraestrutura adicional.
+        </div>
+        <ul class="doc-list">
+          <li>Os dados climáticos (temperatura, umidade, chuva, UV etc.) agora são exibidos em tabelas estilizadas com CSS puro</li>
+          <li>O visual segue o mesmo padrão de cores e tipografia do restante da interface</li>
+          <li>Elimina a dependência de serviço externo de monitoramento (Grafana)</li>
+        </ul>
+
+        <!-- Mudança 2 -->
+        <h3 class="sub-title">9.2 Adição de Serviço MCP para Busca de Dados</h3>
+        <p style="font-size:0.95rem;line-height:1.7;color:var(--gray-text);">
+          Foi integrado um <strong>serviço MCP (Model Context Protocol)</strong> ao projeto, responsável por realizar buscas estruturadas
+          nos dados armazenados no banco PostgreSQL e entregar esse contexto diretamente à IA antes de gerar uma resposta.
+        </p>
+        <div class="note-box">
+          Por que a mudança? Antes, a IA recebia apenas o texto da pergunta do usuário e precisava inferir tudo.
+          Com o MCP, a IA recebe dados reais e organizados do banco antes de raciocinar — isso torna as respostas muito mais precisas e confiáveis.
+        </div>
+        <ul class="doc-list">
+          <li>O MCP atua como uma camada intermediária entre o banco de dados e o modelo de IA</li>
+          <li>Realiza buscas otimizadas e retorna os dados formatados para que o modelo entenda melhor o contexto</li>
+          <li>Melhora a qualidade dos insights gerados pelo chatbot para o agricultor</li>
+        </ul>
+
+        <!-- Mudança 3 -->
+        <h3 class="sub-title">9.3 Mudança da Lógica de Raciocínio da IA: de Serviço Externo para Diretório Local do Projeto</h3>
+        <p style="font-size:0.95rem;line-height:1.7;color:var(--gray-text);">
+          A lógica de raciocínio da IA foi alterada: antes, ela buscava contexto e instruções em um <strong>serviço externo</strong>;
+          agora, o modelo consulta diretamente o <strong>diretório local do projeto</strong> para carregar suas instruções, regras e contexto base.
+        </p>
+        <div class="note-box">
+          Por que a mudança? Centralizar as instruções da IA no próprio repositório do projeto facilita o versionamento,
+          permite que qualquer membro da equipe edite o comportamento da IA sem depender de ferramentas externas,
+          e reduz a latência na hora de montar o prompt.
+        </div>
+        <ul class="doc-list">
+          <li>O contexto da IA (system prompt, regras, perfil do assistente) passa a ser um arquivo dentro do próprio projeto</li>
+          <li>Facilita ajustes no comportamento do chatbot sem precisar mexer em serviços externos</li>
+          <li>Melhora o controle de versão — qualquer mudança na IA fica registrada no git junto com o restante do código</li>
+        </ul>
+
+        <!-- Resumo das mudanças em tabela -->
+        <h3 class="sub-title">Resumo das Mudanças</h3>
+        <table class="data-table u-full-width">
+          <thead>
+            <tr>
+              <th style="width:30%">O que mudou</th>
+              <th style="width:35%">Antes</th>
+              <th style="width:35%">Depois</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="td-label">Dashboard / Visualizações</td>
+              <td>Grafana (serviço externo)</td>
+              <td>Tabelas nativas em HTML + CSS</td>
+            </tr>
+            <tr>
+              <td class="td-label">Busca de Dados para IA</td>
+              <td>Consulta manual via endpoints da API</td>
+              <td>Serviço MCP estruturado</td>
+            </tr>
+            <tr>
+              <td class="td-label">Lógica de Raciocínio da IA</td>
+              <td>Contexto carregado de serviço externo</td>
+              <td>Contexto lido do diretório local do projeto</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       9. LINKS
   ══════════════════════════════════════ -->
   <div class="row" id="links">
     <div class="twelve columns">
       <div class="section-block">
-        <span class="section-number">— seção 08</span>
+        <span class="section-number">— seção 09</span>
         <h2 class="section-title">Links</h2>
 
         <ul class="doc-list">
@@ -941,21 +1046,19 @@
           <li><a href="https://iagro.pradortiz.lat" target="_blank" rel="noopener">Chat IA - https://iagro.pradortiz.lat</a></li>
           <li><a href="https://drive.google.com/file/d/1s3ssiObbof-p4sFDAfHSludAOn2dMyoS/view?usp=drive_link" target="_blank" rel="noopener">Gravação do uso do app - https://drive.google.com/file/d/1s3ssiObbof-p4sFDAfHSludAOn2dMyoS/view?usp=drive_link</a></li>
           <li><a href="https://drive.google.com/drive/folders/1GgEobUCCy35RjiL1Xy1TQw02UHMk-JeM?usp=sharing" target="_blank" rel="noopener">Dataset - https://drive.google.com/drive/folders/1GgEobUCCy35RjiL1Xy1TQw02UHMk-JeM?usp=sharing</a></li>
-          
         </ul>
       </div>
     </div>
   </div>
 
 
-  
   <!-- ══════════════════════════════════════
        FOOTER
   ══════════════════════════════════════ -->
   <footer>
     <span>INDUSTRIA 4.0 · ENGENHARIA DE SOFTWARE · UNAERP · RIBEIRÃO PRETO, SP</span>
     <br />
-    <span style="font-size:0.7rem;opacity:0.5;letter-spacing:0.05em;">Versão 1.0</span>
+    <span style="font-size:0.7rem;opacity:0.5;letter-spacing:0.05em;">Versão 1.1 · Atualizado em 26/05/2026</span>
   </footer>
 
 </div><!-- /container -->
